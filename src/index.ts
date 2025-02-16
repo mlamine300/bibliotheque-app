@@ -11,5 +11,5 @@ export interface book {
   cover: string;
   video: string;
   summary: string;
-  avaliable?: boolean;
+  unavaliable?: boolean;
 }
