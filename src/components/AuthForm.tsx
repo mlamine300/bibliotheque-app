@@ -12,7 +12,7 @@ import { z, ZodType } from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
+
   //   FormDescription,
   FormField,
   FormItem,
@@ -69,7 +69,7 @@ const AuthForm = <T extends FieldValues>({
                   </FormLabel>
                   <FormControl>
                     {feild === "universityCard" ? (
-                      <ImageUpload />
+                      <ImageUpload onFileChange={field.onChange} />
                     ) : (
                       <Input
                         required={true}
