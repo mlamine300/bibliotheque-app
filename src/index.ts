@@ -13,3 +13,11 @@ export interface book {
   summary: string;
   unavaliable?: boolean;
 }
+
+export interface signUpParams {
+  fullName: string;
+  email: string;
+  universityId: number;
+  password: string;
+  universityCard: string;
+}

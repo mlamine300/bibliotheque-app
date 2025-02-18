@@ -25,24 +25,54 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { FIELD_NAMES, FIELD_TYPES } from "../../constants";
 import ImageUpload from "./ImageUpload";
+import { useToast } from "@/hooks/use-toast";
+
+import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
+  onSubmit: (
+    data: T
+  ) => Promise<{ success: boolean; message?: string; session?: Session }>;
   type: "SIGN_IN" | "SIGN_UP ";
 }
+
 const AuthForm = <T extends FieldValues>({
   type,
   schema,
   defaultValues,
   onSubmit,
 }: Props<T>) => {
+  const { toast } = useToast();
   const form: UseFormReturn<T> = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
+  const router = useRouter();
   const isForSignIn = type === "SIGN_IN";
-  console.log(defaultValues);
+  const handleSubmit = async (data: T) => {
+    const { success, message, session } = await onSubmit(data);
+    //const session = { user: { name: "zbouba" } };
+
+    if (success) {
+      toast({
+        title: isForSignIn ? "Sign in" : "Sign Up successfully",
+        description: isForSignIn
+          ? `Welcome back ${session?.user?.name || ""}`
+          : `Welcome to Bibleotheque app Dear ${session?.user?.name || ""}`,
+      });
+      router.replace("/", { scroll: false });
+    } else {
+      toast({
+        title: "Error",
+        description: message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  //console.log(defaultValues);
   return (
     <Form {...form}>
       <div className="flex flex-col gap-4">
@@ -56,7 +86,7 @@ const AuthForm = <T extends FieldValues>({
             ? "Access the vast collection of resources, and stay updated"
             : "Please complete all fields and upload a valid university ID to gain access to the library"}
         </p>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
           {Object.keys(defaultValues).map((feild) => (
             <FormField
               key={feild}
