@@ -9,6 +9,9 @@ import { signUpParams } from "@/index";
 import { hash } from "bcryptjs";
 
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import ratelimit from "../rateLimite";
+import { redirect } from "next/navigation";
 
 export const signUp = async ({
   fullName,
@@ -17,6 +20,9 @@ export const signUp = async ({
   password,
   universityCard,
 }: signUpParams) => {
+  const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
+  if (!success) return redirect("/too-fast");
   const user = await db
     .select()
     .from(usersTable)
@@ -51,6 +57,11 @@ export const signInWithCredenetials: (data: {
   success: boolean;
   message?: string;
 }> = async ({ email, password }: { email: string; password: string }) => {
+  const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
+  if (!success) {
+    return redirect("/too-fast");
+  }
   try {
     console.log("sign in..........");
     const response = await signIn("credentials", {
