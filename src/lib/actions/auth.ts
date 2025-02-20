@@ -44,7 +44,6 @@ export const signUp = async ({
       universityCard,
     });
 
-    console.log(`${config.env.prodApiEndPoint}/api/workflow/onboard`);
     await workflowClient.trigger({
       url: `${config.env.prodApiEndPoint}/api/workflow/onboard`,
       body: {
@@ -52,8 +51,12 @@ export const signUp = async ({
         name: fullName,
       },
     });
+    try {
+      await signInWithCredenetials({ email, password });
+    } catch (error) {
+      console.error(error);
+    }
 
-    await signInWithCredenetials({ email, password });
     return { success: true };
   } catch (error: any) {
     console.error(error);
@@ -82,7 +85,7 @@ export const signInWithCredenetials: (data: {
     });
 
     if (response?.error) {
-      console.log("error 61 : " + response.error);
+      console.error("error 61 : " + response.error);
       return { success: false, error: "82" + response.error };
     }
     // console.log("----------*---------");
@@ -93,7 +96,7 @@ export const signInWithCredenetials: (data: {
     const session = await auth();
     return { success: true, session: session };
   } catch (error: any) {
-    console.log("error 67: " + error.message);
+    console.error("error 67: " + error.message);
     console.log(error);
     return { success: false, message: "94" + error.message };
   }
