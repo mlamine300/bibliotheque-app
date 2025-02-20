@@ -50,7 +50,7 @@ export const signUp = async ({
         name: fullName,
       },
     });
-    await await signInWithCredenetials({ email, password });
+    await signInWithCredenetials({ email, password });
     return { success: true };
   } catch (error: any) {
     return { success: false, message: error.message };
