@@ -105,6 +105,8 @@ export const signInWithCredenetials: (data: {
 async function sendEmail(message: string, email: string, name: string) {
   try {
     console.log("sending email............");
+    console.log(config.env.nodemailer.emailAdress);
+    console.log(config.env.nodemailer.emailPassword);
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
