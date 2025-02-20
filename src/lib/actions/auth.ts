@@ -53,6 +53,7 @@ export const signUp = async ({
     await signInWithCredenetials({ email, password });
     return { success: true };
   } catch (error: any) {
+    console.log(error);
     return { success: false, message: "56" + error.message };
   }
 };
