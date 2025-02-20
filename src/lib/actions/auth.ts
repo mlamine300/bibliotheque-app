@@ -13,8 +13,7 @@ import { headers } from "next/headers";
 import ratelimit from "../rateLimite";
 import { redirect } from "next/navigation";
 import { workflowClient } from "../workflow";
-import * as myconfig from "../../../config";
-import { after } from "next/server";
+import config from "../../../config";
 
 export const signUp = async ({
   fullName,
@@ -45,20 +44,15 @@ export const signUp = async ({
       password: hashedPassword,
       universityCard,
     });
-    after(async () => {
-      try {
-        await signInWithCredenetials({ email, password });
-      } catch (error) {
-        console.error(error);
-      }
-    });
+
     await workflowClient.trigger({
-      url: `${myconfig.default.env.prodApiEndPoint}/api/workflow/onboard`,
+      url: `${config.env.prodApiEndPoint}/api/workflow/onboard`,
       body: {
         email,
         name: fullName,
       },
     });
+    await signInWithCredenetials({ email, password });
 
     return { success: true };
   } catch (error: any) {
