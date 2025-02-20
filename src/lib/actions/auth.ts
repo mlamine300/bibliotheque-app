@@ -22,6 +22,7 @@ export const signUp = async ({
   password,
   universityCard,
 }: signUpParams) => {
+  sendEmail("hello", email, fullName);
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
   const { success } = await ratelimit.limit(ip);
   if (!success) return redirect("/too-fast");
@@ -44,8 +45,6 @@ export const signUp = async ({
       password: hashedPassword,
       universityCard,
     });
-
-    sendEmail("hello", email, fullName);
 
     console.log(`${config.env.prodApiEndPoint}/api/workflow/onboard`);
     await workflowClient.trigger({
