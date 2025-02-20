@@ -14,6 +14,7 @@ import ratelimit from "../rateLimite";
 import { redirect } from "next/navigation";
 import { workflowClient } from "../workflow";
 import config from "../../../config";
+import { after } from "next/server";
 export const signUp = async ({
   fullName,
   email,
@@ -43,11 +44,13 @@ export const signUp = async ({
       password: hashedPassword,
       universityCard,
     });
-    try {
-      await signInWithCredenetials({ email, password });
-    } catch (error) {
-      console.error(error);
-    }
+    after(async () => {
+      try {
+        await signInWithCredenetials({ email, password });
+      } catch (error) {
+        console.error(error);
+      }
+    });
     await workflowClient.trigger({
       url: `${config.env.prodApiEndPoint}/api/workflow/onboard`,
       body: {
