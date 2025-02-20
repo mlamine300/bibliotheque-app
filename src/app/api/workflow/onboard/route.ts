@@ -15,8 +15,11 @@ const THREE_DAY_IN_MS = 3 * ONE_DAY_IN_MS;
 const THIRTY_DAY_IN_MS = 30 * ONE_DAY_IN_MS;
 
 export const { POST } = serve<InitialData>(async (context) => {
-  const { email } = context.requestPayload;
-  const name = "rtyuiok;";
+  const { email, name } = context.requestPayload;
+  console.log("context.....");
+  console.log(context);
+  console.log("context.....");
+  //const name = "rtyuiok;";
   await context.run("new-signup", async () => {
     await sendEmail("Welcome to the platform", email, name);
   });
