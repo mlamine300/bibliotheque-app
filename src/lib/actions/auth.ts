@@ -13,8 +13,9 @@ import { headers } from "next/headers";
 import ratelimit from "../rateLimite";
 import { redirect } from "next/navigation";
 import { workflowClient } from "../workflow";
-import config from "../../../config";
+import * as myconfig from "../../../config";
 import { after } from "next/server";
+export const config = { maxDuration: 60 };
 export const signUp = async ({
   fullName,
   email,
@@ -52,7 +53,7 @@ export const signUp = async ({
       }
     });
     await workflowClient.trigger({
-      url: `${config.env.prodApiEndPoint}/api/workflow/onboard`,
+      url: `${myconfig.default.env.prodApiEndPoint}/api/workflow/onboard`,
       body: {
         email,
         name: fullName,
