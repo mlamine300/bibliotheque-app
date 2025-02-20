@@ -53,7 +53,7 @@ export const signUp = async ({
     await signInWithCredenetials({ email, password });
     return { success: true };
   } catch (error: any) {
-    return { success: false, message: error.message };
+    return { success: false, message: "56" + error.message };
   }
 };
 
@@ -79,7 +79,7 @@ export const signInWithCredenetials: (data: {
 
     if (response?.error) {
       console.log("error 61 : " + response.error);
-      return { success: false, error: response.error };
+      return { success: false, error: "82" + response.error };
     }
     // console.log("----------*---------");
     // console.log(response);
@@ -91,6 +91,6 @@ export const signInWithCredenetials: (data: {
   } catch (error: any) {
     console.log("error 67: " + error.message);
     console.log(error);
-    return { success: false, message: error.message };
+    return { success: false, message: "94" + error.message };
   }
 };
