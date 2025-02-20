@@ -16,12 +16,14 @@ const THIRTY_DAY_IN_MS = 30 * ONE_DAY_IN_MS;
 
 export const { POST } = serve<InitialData>(async (context) => {
   const { email, name } = context.requestPayload;
-  console.log("context.....");
-  console.log(context);
-  console.log("context.....");
+
   //const name = "rtyuiok;";
   await context.run("new-signup", async () => {
-    await sendEmail("Welcome to the platform", email, name);
+    await sendEmail(
+      `Welcome to the platform MR ${name};\n\ndont forget a king always reads;\n\nRegards Lamine.`,
+      email,
+      name
+    );
   });
 
   await context.sleep("wait-for-3-days", 60 * 60 * 24 * 3);

@@ -8,7 +8,6 @@ import { usersTable } from "@/db/schema";
 import { signUpParams } from "@/index";
 import { hash } from "bcryptjs";
 
-import nodemailer from "nodemailer";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import ratelimit from "../rateLimite";
@@ -22,7 +21,6 @@ export const signUp = async ({
   password,
   universityCard,
 }: signUpParams) => {
-  sendEmail("hello", email, fullName);
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
   const { success } = await ratelimit.limit(ip);
   if (!success) return redirect("/too-fast");
@@ -100,35 +98,3 @@ export const signInWithCredenetials: (data: {
     return { success: false, message: "94" + error.message };
   }
 };
-
-async function sendEmail(message: string, email: string, name: string) {
-  try {
-    console.log("sending email............");
-    console.log(config.env.nodemailer.emailAdress);
-    console.log(config.env.nodemailer.emailPassword);
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: config.env.nodemailer.emailAdress,
-        pass: config.env.nodemailer.emailPassword,
-      },
-    });
-
-    const mailOptions = {
-      from: config.env.nodemailer.emailAdress,
-      to: email,
-      subject: `welcome ${name}`,
-      text: message,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log("email sended");
-    // return Response.json(
-    //   { message: "Email sent successfully!" },
-    //   { status: 200 }
-    // );
-  } catch (error: any) {
-    console.error(error.message);
-    throw new Error(error.message);
-  }
-}
