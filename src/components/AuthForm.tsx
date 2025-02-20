@@ -138,5 +138,5 @@ const AuthForm = <T extends FieldValues>({
     </Form>
   );
 };
-
+//npm install --legacy-peer-deps
 export default AuthForm;
