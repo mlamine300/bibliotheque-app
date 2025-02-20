@@ -1,10 +1,17 @@
 import { serve } from "@upstash/workflow/nextjs";
+
+import config from "../../../../../config";
 import emailjs from "@emailjs/browser";
+import { db } from "@/db";
+import { usersTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
 type InitialData = {
   email: string;
   name: string;
 };
-import config from "../../../../../config";
+const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
+const THREE_DAY_IN_MS = 3 * ONE_DAY_IN_MS;
+const THIRTY_DAY_IN_MS = 30 * ONE_DAY_IN_MS;
 
 export const { POST } = serve<InitialData>(async (context) => {
   const { email } = context.requestPayload;
@@ -17,7 +24,7 @@ export const { POST } = serve<InitialData>(async (context) => {
 
   while (true) {
     const state = await context.run("check-user-state", async () => {
-      return await getUserState();
+      return await getUserState(email);
     });
 
     if (state === "non-active") {
@@ -43,6 +50,7 @@ async function sendEmail(message: string, email: string, name: string) {
     from_name: "Lamine",
     message: message,
   };
+
   await emailjs
     .send(
       config.env.emailJs.serviceId,
@@ -65,7 +73,20 @@ async function sendEmail(message: string, email: string, name: string) {
 
 type UserState = "non-active" | "active";
 
-const getUserState = async (): Promise<UserState> => {
+const getUserState = async (email: string): Promise<UserState> => {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email))
+    .limit(1);
+  if (user.length === 0) return "non-active";
+
+  const now = new Date();
+  const timeDiff =
+    now.getTime() - new Date(user[0].lastActivityDate!).getTime();
+  if (timeDiff < THIRTY_DAY_IN_MS && timeDiff > THREE_DAY_IN_MS)
+    return "non-active";
+
   // Implement user state logic here
-  return "non-active";
+  return "active";
 };
