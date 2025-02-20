@@ -43,6 +43,7 @@ export const signUp = async ({
       password: hashedPassword,
       universityCard,
     });
+    console.log(`${config.env.prodApiEndPoint}/api/workflow/onboard`);
     await workflowClient.trigger({
       url: `${config.env.prodApiEndPoint}/api/workflow/onboard`,
       body: {
@@ -53,7 +54,7 @@ export const signUp = async ({
     await signInWithCredenetials({ email, password });
     return { success: true };
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     return { success: false, message: "56" + error.message };
   }
 };

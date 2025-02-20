@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { serve } from "@upstash/workflow/nextjs";
-
+import nodemailer from "nodemailer";
 import config from "../../../../../config";
-import emailjs from "@emailjs/browser";
+//import emailjs from "@emailjs/browser";
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -42,34 +43,64 @@ export const { POST } = serve<InitialData>(async (context) => {
 });
 
 async function sendEmail(message: string, email: string, name: string) {
-  // Implement email sending logic here
-  console.log(`Sending ${message} email to ${email}`);
-  const templateParams = {
-    email: email,
-    to_name: name,
-    from_name: "Lamine",
-    message: message,
-  };
-
-  await emailjs
-    .send(
-      config.env.emailJs.serviceId,
-      config.env.emailJs.templateId,
-      templateParams,
-      {
-        publicKey: config.env.emailJs.publicKey,
-      }
-    )
-    .then(
-      (response) => {
-        console.log("SUCCESS!", response.status, response.text);
+  try {
+    console.log("sending email............");
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: config.env.nodemailer.emailAdress,
+        pass: config.env.nodemailer.emailPassword,
       },
-      (err) => {
-        console.log("FAILED...", err);
-        throw new Error(err.message);
-      }
-    );
+    });
+
+    const mailOptions = {
+      from: config.env.nodemailer.emailAdress,
+      to: email,
+      subject: `welcome ${name}`,
+      text: message,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("email sended");
+    // return Response.json(
+    //   { message: "Email sent successfully!" },
+    //   { status: 200 }
+    // );
+  } catch (error: any) {
+    console.error(error.message);
+    throw new Error(error.message);
+  }
 }
+// async function sendEmail(message: string, email: string, name: string) {
+//   // Implement email sending logic here
+//   console.log(`Sending ${message} email to ${email}`);
+//   const templateParams = {
+//     email: email,
+//     to_name: name,
+//     from_name: "Lamine",
+//     message: message,
+//   };
+
+//   await emailjs.init({ publicKey: config.env.emailJs.publicKey });
+//   await emailjs
+//     .send(
+//       config.env.emailJs.serviceId,
+//       config.env.emailJs.templateId,
+//       templateParams,
+//       {
+//         publicKey: config.env.emailJs.publicKey,
+//       }
+//     )
+//     .then(
+//       (response) => {
+//         console.log("SUCCESS!", response.status, response.text);
+//       },
+//       (err) => {
+//         console.log("FAILED...", err);
+//         throw new Error(err.message);
+//       }
+//     );
+// }
 
 type UserState = "non-active" | "active";
 
