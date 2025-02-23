@@ -8,6 +8,27 @@
       "when": 1739873851602,
       "tag": "0000_watery_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1740306494294,
+      "tag": "0001_tiresome_stryfe",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740323230473,
+      "tag": "0002_hot_hellfire_club",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1740342308789,
+      "tag": "0003_uneven_mariko_yashida",
+      "breakpoints": true
     }
   ]
 }

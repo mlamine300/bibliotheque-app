@@ -7,6 +7,7 @@ import {
   pgEnum,
   date,
   timestamp,
+  real,
 } from "drizzle-orm/pg-core";
 
 export const STATUS_ENUM = pgEnum("status", [
@@ -26,5 +27,20 @@ export const usersTable = pgTable("users", {
   status: STATUS_ENUM("status").default("PENDING"),
   role: ROLE_ENUM("role").default("USER"),
   lastActivityDate: date("last_activity_date").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+export const bookTable = pgTable("books", {
+  id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
+  title: varchar("title", { length: 100 }).notNull(),
+  author: varchar("author", { length: 100 }).notNull(),
+  genre: varchar("genre", { length: 100 }).notNull(),
+  total_copies: integer(),
+  available_copies: integer(),
+  cover: varchar("cover", { length: 100 }).notNull(),
+  color: varchar("color", { length: 100 }).notNull(),
+  video: varchar("video", { length: 100 }).notNull(),
+  rating: real(),
+  description: text("description"),
+  summary: text("summary"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });

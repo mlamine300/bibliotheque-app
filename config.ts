@@ -14,11 +14,11 @@ const config = {
       qstashUrl: process.env.UPSTASH_QSTASH_URL!,
       qstashToken: process.env.UPSTASH_QSTASH_TOKEN!,
     },
-    emailJs: {
-      serviceId: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-      templateId: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-      publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
-    },
+    // emailJs: {
+    //   serviceId: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+    //   templateId: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+    //   publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
+    // },
     nodemailer: {
       emailAdress: process.env.NEXT_PUBLIC_NODEMAILER_EMAIL_ADRESS!,
       emailPassword: process.env.NEXT_PUBLIC_NODEMAILER_EMAIL_PASS!,
