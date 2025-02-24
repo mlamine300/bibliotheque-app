@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { auth, signIn } from "../../auth";
+import { auth, signIn, signOut } from "../../auth";
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import { signUpParams } from "@/index";
@@ -14,6 +14,10 @@ import ratelimit from "../rateLimite";
 import { redirect } from "next/navigation";
 import { workflowClient } from "../workflow";
 import config from "../../../config";
+
+export const logOut = async () => {
+  await signOut();
+};
 
 export const signUp = async ({
   fullName,

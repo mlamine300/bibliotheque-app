@@ -43,12 +43,14 @@ const seed = async () => {
       "/books/img"
     )) as string;
 
-    const videoUrl = (await uploadToImageKit(
-      book.video,
-      `${book.title}.mp4`,
-      "/books/videos"
-    )) as string;
+    // const videoUrl = (await uploadToImageKit(
+    //   book.video,
+    //   `${book.title}.mp4`,
+    //   "/books/videos"
+    // )) as string;
 
+    const videoUrl =
+      "/books/videos/mixkit-blonde-woman-reading-a-book-4948-hd-ready.mp4/ik-video.mp4";
     await db
       .insert(bookTable)
       .values({ ...book, id: undefined, cover: coverUrl, video: videoUrl });
@@ -58,5 +60,10 @@ const seed = async () => {
     }
   }
 };
+const multipleSeed = async () => {
+  for (let i = 0; i < 10; i++) {
+    seed();
+  }
+};
 
-seed();
+multipleSeed();

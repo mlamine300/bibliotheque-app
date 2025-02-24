@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import BookCover from "./BookCover";
 
 function BookOverview({
-  id,
+  // id,
   title,
   author,
   genre,
@@ -14,10 +14,10 @@ function BookOverview({
   description,
   color,
   cover,
-  video,
-  summary,
-  avaliable,
-}: book) {
+}: // video,
+// summary,
+// avaliable,
+book) {
   return (
     <div className="flex flex-row justify-between">
       <div className="flex flex-col sm:max-w-[40%]">

@@ -1,9 +1,7 @@
 import { cn } from "@/lib/utils";
 
-import { Button } from "../ui/button";
-import Image from "next/image";
-import { signOut } from "@/auth";
 import ProfileImage from "../ProfileImage";
+import LogOutButtont from "../LogOutButtont";
 
 interface Props {
   name: string;
@@ -24,15 +22,7 @@ function SideBarProfileItem({ name, email, img, className }: Props) {
         <h3 className="text-sm font-semibold text-dark-100">{name} </h3>
         <p className="text-xs text-light-500">{email} </p>
       </div>
-      <Button
-        className="bg-transparent "
-        onClick={async () => {
-          "use server";
-          await signOut();
-        }}
-      >
-        <Image src="icons/logout.svg" alt="logout" width={30} height={30} />
-      </Button>
+      <LogOutButtont className="bg-transparent" />
     </div>
   );
 }

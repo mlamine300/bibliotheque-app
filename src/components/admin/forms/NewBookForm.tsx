@@ -47,13 +47,14 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
     defaultValues: values || defaultValues,
   });
   const submit = async (values: z.infer<typeof bookSchema>) => {
+    console.log(values);
     const { success, message, data } = await addBook(values);
     if (!success) {
       toast({ title: "Error", content: message, variant: "destructive" });
     } else {
       console.log(data);
       toast({ title: "success", content: message });
-      router.push("/admin/books/007");
+      router.push(`/books/${data?.id}`);
     }
   };
   return (
@@ -132,9 +133,6 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
               <FormControl>
                 <Input
                   type="number"
-                  min={0}
-                  max={5}
-                  step={0.1}
                   className="py-6 text-lg placeholder:text-light-500"
                   placeholder="Enter the total number of books"
                   {...field}

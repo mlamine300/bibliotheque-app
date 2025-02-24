@@ -24,5 +24,5 @@ export const bookSchema = z.object({
   video: z.string().nonempty(),
   rating: z.coerce.number().lte(5),
   description: z.string().min(10).max(1000),
-  summary: z.string().min(10).max(1000),
+  summary: z.string().min(10),
 });

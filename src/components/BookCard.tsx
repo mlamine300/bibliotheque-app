@@ -6,18 +6,29 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Button } from "./ui/button";
 
-function BookCard({ id, title, genre, color, cover, unavaliable }: book) {
+function BookCard({
+  className,
+  id,
+  title,
+  genre,
+  color,
+  cover,
+  unavaliable,
+}: book & { className: string }) {
   return (
     <li
       className={cn(
-        "flex flex-col md:max-w-40 items-center",
-        unavaliable && "w-full"
+        "flex flex-col md:max-w-40 items-center font-ibm-plex-sans",
+        unavaliable && "w-full",
+        className
       )}
     >
       <Link href={`/books/${id}`} className="flex flex-col items-center">
         <BookCover coverColor={color} coverUrl={cover} className="mx-auto" />
-        <p className="text-lg text-light-100 font-semibold">{title}</p>
-        <p className="text-sm text-light-100 opacity-60 font-semibold">
+        <p className="text-xl max-h-14 line-clamp-2 w-40 text-light-100 font-semibold">
+          {title}
+        </p>
+        <p className="text-sm italic text-light-100 opacity-60 font-light overflow-hidden">
           {genre}{" "}
         </p>
       </Link>
