@@ -266,13 +266,31 @@ export const getBorrowedBooks: (params?: {
       };
     const bookIDs = res.map((r) => r.bookId);
 
-    const books = await db
+    const booksResp = await db
       .select()
       .from(bookTable)
       .where(inArray(bookTable.id, bookIDs))
+      .innerJoin(
+        borrowedBooksTable,
+        and(
+          eq(borrowedBooksTable.bookId, bookTable.id),
+          eq(borrowedBooksTable.userId, session.user.id)
+        )
+      )
       .offset(offset)
       .limit(limit);
-
+    const books = booksResp.map((br) => {
+      const childbooks = br.books;
+      const borrowedBooks = br["boorowed-books"];
+      return {
+        ...childbooks,
+        borrowedDate: borrowedBooks.borrowedDate,
+        returnDate: borrowedBooks.returnDate,
+        dueDate: borrowedBooks.dueDate,
+        //status: borrowedBooks.status,
+      };
+    });
+    // console.log(books);
     return {
       success: true,
       data: { books: books as book[], count: bookIDs.length },

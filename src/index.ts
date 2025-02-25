@@ -12,6 +12,11 @@ export interface book {
   video: string;
   summary: string;
   unavaliable?: boolean;
+  createdAt?: string;
+  borrowedDate?: string;
+  returnDate?: string;
+  dueDate?: string;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export interface signUpParams {

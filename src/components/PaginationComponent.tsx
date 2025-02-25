@@ -57,47 +57,53 @@ const PaginationComponent = ({
     return `?${params.toString()}`;
   };
   return (
-    <Pagination className={cn("", className)}>
-      <PaginationContent>
-        {activeIndex > 1 && (
-          <PaginationItem className={itemStyle}>
-            <PaginationPrevious href={generateHref(activeIndex - 1)} />
-          </PaginationItem>
-        )}
-        {dotsBefor && (
-          <PaginationItem>
-            <PaginationLink href={generateHref(dotsTo)} className={itemStyle}>
-              ...
-            </PaginationLink>
-          </PaginationItem>
-        )}
-        {pageIndexes.map((page) => (
-          <PaginationItem
-            key={page}
-            className={cn(itemStyle, page === activeIndex && selectedItemStyle)}
-          >
-            <PaginationLink
-              isActive={page === activeIndex}
-              href={generateHref(page)}
+    <div className={cn("w-fit", className)}>
+      <Pagination>
+        <PaginationContent>
+          {activeIndex > 1 && (
+            <PaginationItem className={itemStyle}>
+              <PaginationPrevious href={generateHref(activeIndex - 1)} />
+            </PaginationItem>
+          )}
+          {dotsBefor && (
+            <PaginationItem>
+              <PaginationLink href={generateHref(dotsTo)} className={itemStyle}>
+                ...
+              </PaginationLink>
+            </PaginationItem>
+          )}
+          {pageIndexes.map((page) => (
+            <PaginationItem
+              key={page}
+              className={cn(
+                itemStyle,
+                page === activeIndex && selectedItemStyle
+              )}
             >
-              {page}{" "}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
-        {dotsAfter && (
-          <PaginationItem>
-            <PaginationLink href={generateHref(dotsTo)} className={itemStyle}>
-              ...
-            </PaginationLink>
-          </PaginationItem>
-        )}
-        {activeIndex < pagesCount && (
-          <PaginationItem className={itemStyle}>
-            <PaginationNext href={generateHref(activeIndex + 1)} />
-          </PaginationItem>
-        )}
-      </PaginationContent>
-    </Pagination>
+              <PaginationLink
+                className={page === activeIndex ? "pointer-events-none" : ""}
+                isActive={page === activeIndex}
+                href={generateHref(page)}
+              >
+                {page}{" "}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          {dotsAfter && (
+            <PaginationItem>
+              <PaginationLink href={generateHref(dotsTo)} className={itemStyle}>
+                ...
+              </PaginationLink>
+            </PaginationItem>
+          )}
+          {activeIndex < pagesCount && (
+            <PaginationItem className={itemStyle}>
+              <PaginationNext href={generateHref(activeIndex + 1)} />
+            </PaginationItem>
+          )}
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 };
 

@@ -13,7 +13,7 @@ function ProfileImage({ img }: { img: string }) {
         src={img}
         width={32}
         height={32}
-        className="rounded-full h-8 w-8"
+        className="rounded-full h-8 w-8 "
       />
     </ImageKitProvider>
   );

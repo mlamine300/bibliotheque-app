@@ -10,6 +10,7 @@ import BookList from "@/components/BookList";
 
 import BorrowedBookCard from "@/components/BorrowedBookCard";
 import PaginationComponent from "@/components/PaginationComponent";
+import NoBorrowBooks from "@/components/NoBorrowBooks";
 const PER_PAGE = 4;
 async function page({ params }: any) {
   const urlEndPoint = config.env.imagekit.urlEndpoint;
@@ -66,7 +67,7 @@ async function page({ params }: any) {
             />
           </div>
         ) : (
-          ""
+          <NoBorrowBooks />
         )}
       </div>
     </section>

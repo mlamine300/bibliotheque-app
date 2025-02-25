@@ -1,10 +1,9 @@
 "use client";
-import Image from "next/image";
+
 import React, { useState } from "react";
-import { Button } from "./ui/button";
 import { logOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
-
+import { BiLogOut } from "react-icons/bi";
 function LogOutButtont({ className }: { className?: string }) {
   const [pending, setPending] = useState<boolean>(false);
   const handleLogOut = async () => {
@@ -13,7 +12,7 @@ function LogOutButtont({ className }: { className?: string }) {
     setPending(false);
   };
   return (
-    <Button
+    <button
       disabled={pending}
       className={cn(
         className,
@@ -21,8 +20,8 @@ function LogOutButtont({ className }: { className?: string }) {
       )}
       onClick={handleLogOut}
     >
-      <Image src="/icons/logout.svg" alt="logout" width={30} height={30} />
-    </Button>
+      <BiLogOut className="w-6 h-6 text-red" />
+    </button>
   );
 }
 

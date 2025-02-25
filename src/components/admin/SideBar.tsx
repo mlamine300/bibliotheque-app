@@ -12,7 +12,7 @@ function SideBar({ session }: { session: Session }) {
     redirect("/sign-in");
   }
   return (
-    <aside className="sticky left-0 top-0  bg-white sm:w-1/5  h-dvh py-2 sm:py-4 px-4 sm:px-8 flex flex-col gap-4 sm:gap-8">
+    <aside className="sticky left-0 top-0  bg-white sm:w-80  h-dvh py-2 sm:py-4 px-4 sm:px-8 flex flex-col gap-4 sm:gap-8">
       <div className="flex gap-2 items-center border-dashed border-b-2  border-light-500 py-3 sm:py-6 mx-2 sm:mx-4 ">
         <Image
           src="/icons/admin/logo.svg"
