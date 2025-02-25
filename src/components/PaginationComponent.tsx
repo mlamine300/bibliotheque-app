@@ -33,9 +33,10 @@ const PaginationComponent = ({
   let start = Math.ceil(activeIndex - paginationSize / 2);
   if (start < 1) start = 1;
   if (start + paginationSize > pagesCount) {
-    start = pagesCount - paginationSize;
+    start = pagesCount - paginationSize || 1;
   }
-  const to = start + paginationSize;
+  let to = start + paginationSize;
+  if (to > pagesCount) to = pagesCount;
   const dotsAfter = activeIndex < pagesCount - paginationSize;
   const dotsBefor = !dotsAfter && activeIndex > paginationSize;
   const dotsTo = dotsAfter
@@ -58,9 +59,11 @@ const PaginationComponent = ({
   return (
     <Pagination className={cn("", className)}>
       <PaginationContent>
-        <PaginationItem className={itemStyle}>
-          <PaginationPrevious href={generateHref(activeIndex - 1)} />
-        </PaginationItem>
+        {activeIndex > 1 && (
+          <PaginationItem className={itemStyle}>
+            <PaginationPrevious href={generateHref(activeIndex - 1)} />
+          </PaginationItem>
+        )}
         {dotsBefor && (
           <PaginationItem>
             <PaginationLink href={generateHref(dotsTo)} className={itemStyle}>
@@ -88,9 +91,11 @@ const PaginationComponent = ({
             </PaginationLink>
           </PaginationItem>
         )}
-        <PaginationItem className={itemStyle}>
-          <PaginationNext href={generateHref(activeIndex + 1)} />
-        </PaginationItem>
+        {activeIndex < pagesCount && (
+          <PaginationItem className={itemStyle}>
+            <PaginationNext href={generateHref(activeIndex + 1)} />
+          </PaginationItem>
+        )}
       </PaginationContent>
     </Pagination>
   );

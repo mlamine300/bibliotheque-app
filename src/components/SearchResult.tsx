@@ -5,6 +5,7 @@ import BookList from "./BookList";
 import { HiChevronDown } from "react-icons/hi2";
 import PaginationComponent from "./PaginationComponent";
 import { useBookContext } from "@/context/BookContext";
+import BookCard from "./BookCard";
 const SearchResult = ({ books, count }: { books: book[]; count: number }) => {
   const { perPage } = useBookContext();
   console.log(
@@ -23,7 +24,12 @@ const SearchResult = ({ books, count }: { books: book[]; count: number }) => {
           <HiChevronDown className="" />
         </div>
       </div>
-      <BookList className="mb-8" title="" bookList={books} />
+      <BookList
+        rander={(book) => <BookCard className="" key={book.id} {...book} />}
+        className="mb-8"
+        title=""
+        bookList={books}
+      />
       <div className="mt-auto  border-t-[1px] border-t-dark-700 w-full h-40 flex flex-row items-center justify-end">
         <PaginationComponent
           size={3}

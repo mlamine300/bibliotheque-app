@@ -1,10 +1,13 @@
+"use client";
 import Image from "next/image";
 import { book } from "../../src/index";
 import { Button } from "./ui/button";
 import BookCover from "./BookCover";
+import { useToast } from "@/hooks/use-toast";
+import { borrowBook } from "@/lib/actions/book";
 
 function BookOverview({
-  // id,
+  id,
   title,
   author,
   genre,
@@ -18,6 +21,18 @@ function BookOverview({
 // summary,
 // avaliable,
 book) {
+  const { toast } = useToast();
+  const handleBorrow = async () => {
+    const { success, error } = await borrowBook(id);
+    if (error)
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive",
+      });
+    if (success)
+      toast({ title: "Success", description: "Book Borrowed successfully" });
+  };
   return (
     <div className="flex flex-row justify-between">
       <div className="flex flex-col sm:max-w-[40%]">
@@ -32,7 +47,7 @@ book) {
             <span className="text-primary font-semibold">{genre} </span>
           </p>
           <div className="flex items-center">
-            <Image src="icons/star.svg" height={20} width={20} alt="star" />{" "}
+            <Image src="/icons/star.svg" height={20} width={20} alt="star" />{" "}
             &nbsp;
             <span className="text-primary font-semibold">{rating}/5 </span>
           </div>
@@ -52,7 +67,10 @@ book) {
         <p className="my-3 text-light-100 text-justify text-lg">
           {description}
         </p>
-        <Button className="bg-primary rounded-md py-4 px-4 hover:bg-secondary">
+        <Button
+          onClick={handleBorrow}
+          className="bg-primary rounded-md py-4 px-4 hover:bg-secondary"
+        >
           <Image src="/icons/book.svg" alt="book" height={20} width={20} />
           <p className="uppercase text-dark-100 font-bebas-neue text-xl font-semibold">
             BORROW BOOK REQUEST

@@ -44,3 +44,22 @@ export const bookTable = pgTable("books", {
   summary: text("summary"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+const BORROW_STATUS_ENUM = pgEnum("borrow_status", [
+  "BORROWED",
+  "RETURNED",
+  "LATE _RETOURN",
+]);
+export const borrowedBooksTable = pgTable("boorowed-books", {
+  id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
+  bookId: uuid("book-id")
+    .references(() => bookTable.id)
+    .notNull(),
+  userId: uuid("user-id")
+    .references(() => usersTable.id)
+    .notNull(),
+  borrowedDate: date("borrowed-date").notNull().defaultNow(),
+  returnDate: date("return-date"),
+  dueDate: date("DUE-date").notNull(),
+  status: BORROW_STATUS_ENUM("status").default("BORROWED").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});

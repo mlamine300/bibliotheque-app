@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
+import { auth } from "@/auth";
 import { db } from "@/db";
-import { bookTable } from "@/db/schema";
+import { bookTable, borrowedBooksTable } from "@/db/schema";
 import { book } from "@/index";
-import { and, count, eq, like, not, or } from "drizzle-orm";
+import { and, count, eq, inArray, like, not, or } from "drizzle-orm";
 
 type uploadedBook = Omit<book, "id">;
 interface BookActionResponse {
@@ -176,5 +177,111 @@ export const getSearchedBooks: (
   } catch (error) {
     console.error(`"Error getting books  : `, error);
     return { success: false, error: error as string };
+  }
+};
+
+export const borrowBook: (b: string) => Promise<BookActionResponse> = async (
+  bookId
+) => {
+  try {
+    const session = await auth();
+    if (!session?.user?.id)
+      return {
+        success: false,
+        error: "there is no session please connect and try again",
+      };
+    const res = await db
+      .select({ available: bookTable.available_copies })
+      .from(bookTable)
+      .where(eq(bookTable.id, bookId))
+      .limit(1);
+
+    if (!res || res.length < 1) {
+      return { success: false, error: "there is no such book to borrow" };
+    }
+    const availableCopies = (res[0].available as number) || 0;
+    if (!availableCopies) {
+      return { success: false, error: "there is no avaliable copie to borrow" };
+    }
+    const isItBorrowed = await db
+      .select()
+      .from(borrowedBooksTable)
+      .where(
+        and(
+          eq(borrowedBooksTable.bookId, bookId),
+          eq(borrowedBooksTable.userId, session.user.id),
+          eq(borrowedBooksTable.status, "BORROWED")
+        )
+      )
+
+      .limit(1);
+    if (isItBorrowed && isItBorrowed.length > 0) {
+      return { success: false, error: "You already borrowing this book" };
+    }
+    // !availableCopies[0].available
+    const now = new Date();
+    now.setDate(now.getDate() + 10);
+    db.insert(borrowedBooksTable)
+      .values({
+        bookId: bookId,
+        userId: session.user.id,
+        dueDate: now.toISOString().slice(0, 10),
+      })
+      .then(
+        async () =>
+          await db
+            .update(bookTable)
+            .set({ available_copies: availableCopies - 1 })
+            .where(eq(bookTable.id, bookId))
+      );
+    return { success: true };
+  } catch (error) {
+    console.log("Error on borrow action" + error);
+    return { success: false, error: "Error on borrow action " + error };
+  }
+};
+
+export const getBorrowedBooks: (params?: {
+  offset: number;
+  limit: number;
+}) => Promise<BookActionResponse> = async (data) => {
+  const offset = data?.offset || 0;
+  const limit = data?.limit || 10;
+  try {
+    const session = await auth();
+    if (!session?.user?.id)
+      return {
+        success: false,
+        error: "No session :please connect to your account and try again",
+      };
+    const res = await db
+      .select({ bookId: borrowedBooksTable.bookId })
+      .from(borrowedBooksTable)
+      .where(eq(borrowedBooksTable.userId, session.user.id))
+      .orderBy(borrowedBooksTable.createdAt);
+    if (!res || res.length < 1)
+      return {
+        success: true,
+        data: { books: [] as book[], count: 0 },
+      };
+    const bookIDs = res.map((r) => r.bookId);
+
+    const books = await db
+      .select()
+      .from(bookTable)
+      .where(inArray(bookTable.id, bookIDs))
+      .offset(offset)
+      .limit(limit);
+
+    return {
+      success: true,
+      data: { books: books as book[], count: bookIDs.length },
+    };
+  } catch (error) {
+    console.log("error getting berrowed books : ", error);
+    return {
+      success: false,
+      error: error as string,
+    };
   }
 };

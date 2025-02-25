@@ -32,7 +32,7 @@ const layout = async ({ children }: { children: ReactNode }) => {
     // console.log("update last activity");
   });
   return (
-    <main className="root-container">
+    <main className="root-container ">
       <Header session={session} />
       <div className=" max-w-[1500px] mx-auto w-full">{children}</div>
     </main>

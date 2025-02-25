@@ -40,6 +40,7 @@ const defaultValues: z.infer<typeof bookSchema> = {
 };
 function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
   const { toast } = useToast();
+  const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
   const [color, setColor] = useState<Color>(new Color(""));
   const bookForm = useForm<z.infer<typeof bookSchema>>({
@@ -47,6 +48,7 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
     defaultValues: values || defaultValues,
   });
   const submit = async (values: z.infer<typeof bookSchema>) => {
+    setPending(true);
     console.log(values);
     const { success, message, data } = await addBook(values);
     if (!success) {
@@ -56,6 +58,7 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
       toast({ title: "success", content: message });
       router.push(`/books/${data?.id}`);
     }
+    setPending(false);
   };
   return (
     <Form {...bookForm}>
@@ -249,8 +252,14 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
             </FormItem>
           )}
         />
-        <Button className="py-6 bg-primary-admin text-light-100 text-lg font-semibold font-ibm-plex-sans hover:text-primary-admin hover:bg-light-100">
-          {values ? "Add new Book" : "Update Book"}
+        <Button
+          disabled={pending}
+          className=" py-6 bg-primary-admin text-light-100 text-lg
+           font-semibold font-ibm-plex-sans hover:text-primary-admin
+            hover:bg-light-100 disabled:bg-primary-admin/60
+             disabled:cursor-not-allowed disabled:text-gray-700"
+        >
+          {pending ? "Uploading" : values ? "Add new Book" : "Update Book"}
         </Button>
       </form>
     </Form>

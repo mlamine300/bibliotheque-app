@@ -1,3 +1,4 @@
+import BookCard from "@/components/BookCard";
 import BookList from "@/components/BookList";
 import BookOverview from "@/components/BookOverview";
 import VideoCover from "@/components/VideoCover";
@@ -31,7 +32,15 @@ async function page({ params }: { params: { id: string } }) {
         </div>
         <div className="w-full flex flex-col">
           {/* <h3 className="font-semibold">More similer books</h3> */}
-          {books && <BookList bookList={books} title="More similer books" />}
+          {books && (
+            <BookList
+              rander={(book) => (
+                <BookCard className="" key={book.id} {...book} />
+              )}
+              bookList={books}
+              title="More similer books"
+            />
+          )}
         </div>
       </div>
     </div>

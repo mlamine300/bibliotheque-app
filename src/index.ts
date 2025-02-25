@@ -21,3 +21,11 @@ export interface signUpParams {
   password: string;
   universityCard: string;
 }
+export interface userInfo {
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  name: string;
+  email: string;
+  studentId: string;
+  userAvatar: string;
+  universityCard: string;
+}

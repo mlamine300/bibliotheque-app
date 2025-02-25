@@ -1,17 +1,16 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { book } from "../index";
-import BookCard from "./BookCard";
 
 function BookList({
-  bookList,
+  rander,
   title,
   className,
-  bookClassName,
+  bookList,
 }: {
   bookList: book[];
+  rander: (books: book) => ReactNode;
   title: string;
   className?: string;
-  bookClassName?: string;
 }) {
   return (
     <section className={className}>
@@ -19,13 +18,7 @@ function BookList({
         {title}
       </h2>
       <ul className=" mt-10 flex justify-evenly flex-wrap gap-5 max-xs:justify-between xs:gap-20">
-        {bookList.map((book) => (
-          <BookCard
-            className={bookClassName as string}
-            key={book.id}
-            {...book}
-          />
-        ))}
+        {bookList.map(rander)}
       </ul>
     </section>
   );

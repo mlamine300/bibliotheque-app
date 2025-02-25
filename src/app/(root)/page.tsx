@@ -3,6 +3,7 @@ import BookOverview from "@/components/BookOverview";
 import BookList from "@/components/BookList";
 import { getLastBooks } from "@/lib/actions/book";
 import { book } from "@/index";
+import BookCard from "@/components/BookCard";
 
 export default async function Home() {
   const { data, error, success } = await getLastBooks();
@@ -25,7 +26,12 @@ export default async function Home() {
   return (
     <div className="max-w-7xl  mx-auto">
       <BookOverview {...book} />
-      <BookList title="PopularBooks" bookList={books} className="my-8" />
+      <BookList
+        rander={(book) => <BookCard className="" key={book.id} {...book} />}
+        title="PopularBooks"
+        bookList={books}
+        className="my-8"
+      />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   DefaultValues,
@@ -50,8 +50,11 @@ const AuthForm = <T extends FieldValues>({
     defaultValues: defaultValues as DefaultValues<T>,
   });
   const router = useRouter();
+  const [pending, setPending] = useState<boolean>(false);
+
   const isForSignIn = type === "SIGN_IN";
   const handleSubmit = async (data: T) => {
+    setPending(true);
     const { success, message, session } = await onSubmit(data);
     //const session = { user: { name: "zbouba" } };
 
@@ -69,6 +72,7 @@ const AuthForm = <T extends FieldValues>({
         description: message,
         variant: "destructive",
       });
+      setPending(false);
     }
   };
 
@@ -122,10 +126,12 @@ const AuthForm = <T extends FieldValues>({
             />
           ))}
           <Button
-            className="py-6 w-full text-lg text-dark-100 font-bold"
+            disabled={pending}
+            className=" py-6 w-full text-lg text-dark-100 font-bold
+            disabled:cursor-not-allowed disabled:bg-primary/60 disabled:text-dark-100/60"
             type="submit"
           >
-            {isForSignIn ? "Login" : "Sign Up"}
+            {pending ? "Authentifaction..." : isForSignIn ? "Login" : "Sign Up"}
           </Button>
         </form>
 

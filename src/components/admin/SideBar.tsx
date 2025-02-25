@@ -57,7 +57,7 @@ function SideBar({ session }: { session: Session }) {
 
         <SideBarItem
           key="account-request"
-          icon="icons/admin/user.svg"
+          icon="/icons/admin/user.svg"
           title="Account Requests"
           to="/admin/users/requests"
           selected={false}
