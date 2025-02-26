@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import NextAuth, { User } from "next-auth";
-import { eq } from "drizzle-orm";
+import { and, eq, notLike } from "drizzle-orm";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -20,7 +20,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user = await db
           .select()
           .from(usersTable)
-          .where(eq(usersTable.email, credentials.email.toString()))
+          .where(
+            and(
+              eq(usersTable.email, credentials.email.toString()),
+              notLike(usersTable.status, "DELETED")
+            )
+          )
           .limit(1);
 
         if (user.length === 0) {

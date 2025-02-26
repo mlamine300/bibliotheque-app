@@ -1,8 +1,15 @@
+"use server";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import { userInfo } from "@/index";
-import { eq } from "drizzle-orm";
+import { count, eq, not } from "drizzle-orm";
+
+interface UserActionResponse {
+  success: boolean;
+  data?: { count: number; users: userInfo[] };
+  error?: string;
+}
 
 export const getUser: () => Promise<userInfo | null> = async () => {
   try {
@@ -28,16 +35,100 @@ export const getUser: () => Promise<userInfo | null> = async () => {
   studentId: string;
   userAvatar: string;
   universityCard: string; */
-    return {
-      email: user.email,
-      name: user.fullName,
-      status: user.status,
-      studentId: user.universityId + "",
-      universityCard: user.universityCard,
-      userAvatar: "/users/cv%20image%202.jpeg",
-    } as userInfo;
+    return user as userInfo;
   } catch (error) {
     console.error("Error getting user :", error);
     return null;
+  }
+};
+
+export const deleteUser: (
+  userID: string
+) => Promise<UserActionResponse> = async (userID) => {
+  try {
+    const admin = await getUser();
+    if (!admin) {
+      return {
+        success: false,
+        error: "no Session, Please connect and try again",
+      };
+    }
+
+    const userRole = await db
+      .select({ role: usersTable.role })
+      .from(usersTable)
+      .where(eq(usersTable.id, userID));
+
+    if (
+      !admin.role ||
+      admin.role === "USER" ||
+      userRole[0].role === "SUPERADMIN" ||
+      (admin.role === "ADMIN" && userRole[0].role === "ADMIN")
+    ) {
+      console.log(admin.role, "      ", userRole[0].role);
+      return {
+        success: false,
+        error: "You dont have Permission To do this action",
+      };
+    }
+    await db
+      .update(usersTable)
+      .set({ status: "DELETED" })
+      .where(eq(usersTable.id, userID));
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Error getting users, " + error,
+    };
+  }
+};
+
+export const getUsers: (props?: {
+  offset: number;
+  limit: number;
+}) => Promise<UserActionResponse> = async (props) => {
+  const offset = props?.offset || 0;
+  const limit = props?.limit || 10;
+  try {
+    const user = await getUser();
+    if (!user)
+      return {
+        success: false,
+        error: "no Session, Please connect and try again",
+      };
+    if (user.role != "ADMIN" && user.role != "SUPERADMIN")
+      return {
+        success: false,
+        error: "you don't have permission!!",
+      };
+    const countRes = await db
+      .select({ count: count() })
+      .from(usersTable)
+      .where(not(eq(usersTable.status, "DELETED")));
+    const resp = await db
+      .select()
+      .from(usersTable)
+      .where(not(eq(usersTable.status, "DELETED")))
+      .orderBy(usersTable.createdAt)
+      .offset(offset)
+      .limit(limit);
+    if (!countRes || countRes.length < 1 || !resp || resp.length < 1)
+      return {
+        success: false,
+        error: "there is no user in database make sure to add users",
+      };
+
+    return {
+      success: true,
+      data: { count: countRes[0].count || 0, users: resp as userInfo[] },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Error getting users, " + error,
+    };
   }
 };

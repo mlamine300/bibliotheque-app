@@ -33,7 +33,7 @@ const defaultValues: z.infer<typeof bookSchema> = {
   //available_copies: 0,
   description: "",
   //   "",
-  color: "#ffffff",
+  color: "",
   cover: "dfsdfsdf",
   video: "sdfsdfdsf",
   summary: "",
@@ -42,7 +42,7 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
   const { toast } = useToast();
   const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
-  const [color, setColor] = useState<Color>(new Color(""));
+  const [color, setColor] = useState<Color>(new Color(values?.color || ""));
   const bookForm = useForm<z.infer<typeof bookSchema>>({
     resolver: zodResolver(bookSchema),
     defaultValues: values || defaultValues,
@@ -60,6 +60,7 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
     }
     setPending(false);
   };
+
   return (
     <Form {...bookForm}>
       <form
@@ -156,6 +157,7 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
               </FormLabel>
               <FormControl>
                 <FileUpload
+                  defaultFilePath={values?.cover || undefined}
                   type="image"
                   folder="/books/img"
                   variant="light"
@@ -222,6 +224,7 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
               </FormLabel>
               <FormControl>
                 <FileUpload
+                  defaultFilePath={values?.video || undefined}
                   type="video"
                   folder="/books/videos"
                   variant="light"
@@ -252,14 +255,8 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
             </FormItem>
           )}
         />
-        <Button
-          disabled={pending}
-          className=" py-6 bg-primary-admin text-light-100 text-lg
-           font-semibold font-ibm-plex-sans hover:text-primary-admin
-            hover:bg-light-100 disabled:bg-primary-admin/60
-             disabled:cursor-not-allowed disabled:text-gray-700"
-        >
-          {pending ? "Uploading" : values ? "Add new Book" : "Update Book"}
+        <Button size="lg" variant="admin" disabled={pending}>
+          {pending ? "Uploading" : values ? "Update Book" : "Add new Book"}
         </Button>
       </form>
     </Form>

@@ -30,6 +30,7 @@ interface Props {
   variant: "light" | "dark";
   placeHolder: string;
   folder: string;
+  defaultFilePath?: string;
   onFileChange: (filePath: string) => void;
 }
 
@@ -39,11 +40,14 @@ function FileUpload({
   variant,
   placeHolder,
   folder,
+  defaultFilePath,
 }: Props) {
   const { toast } = useToast();
   const IKref = useRef(null);
 
-  const [file, setFile] = useState<{ filePath: string } | null>(null);
+  const [file, setFile] = useState<{ filePath: string } | null>(
+    defaultFilePath ? { filePath: defaultFilePath } : null
+  );
 
   const [progress, setProgress] = useState(0);
   const styles = {

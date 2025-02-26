@@ -27,10 +27,13 @@ export interface signUpParams {
   universityCard: string;
 }
 export interface userInfo {
-  status: "PENDING" | "APPROVED" | "REJECTED";
-  name: string;
+  id?: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "DELETED";
+  fullName: string;
   email: string;
-  studentId: string;
-  userAvatar: string;
+  universityId: string;
+  userAvatar?: string;
   universityCard: string;
+  role?: "USER" | "ADMIN" | "SUPERADMIN";
+  createdAt?: Date;
 }

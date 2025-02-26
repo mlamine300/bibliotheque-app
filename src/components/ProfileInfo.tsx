@@ -4,6 +4,7 @@ import { MdVerified } from "react-icons/md";
 import React from "react";
 import { userInfo } from "..";
 import Image from "next/image";
+import UniversityCard from "./UniversityCard";
 
 function ProfileInfo({
   user,
@@ -43,7 +44,7 @@ function ProfileInfo({
             )}{" "}
           </h3>
           <h3 className="font-semibold text-2xl text-light-400">
-            {user.name}{" "}
+            {user.fullName}{" "}
           </h3>
           <h3 className="text-lg font-light text-light-100">{user.email} </h3>
         </div>
@@ -58,18 +59,11 @@ function ProfileInfo({
       <div className="ml-8 mb-16 flex flex-col mt-8 text-light-100">
         <h3 className="text-lg font-normal text-light-100">Student ID</h3>
         <h3 className=" text-2xl font-semibold text-light-400">
-          {user.studentId}{" "}
+          {user.universityId}{" "}
         </h3>
       </div>
       <div className="flex justify-center w-full">
-        <IKImage
-          urlEndpoint={urlEndpoint}
-          width={486}
-          height={287}
-          alt="user"
-          className="h-[287px] rounded-lg w-[486px] "
-          path={user.universityCard}
-        />
+        <UniversityCard urlEndpoint={urlEndpoint} path={user.universityCard} />
       </div>
     </div>
   );

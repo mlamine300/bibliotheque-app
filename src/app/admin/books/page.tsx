@@ -1,4 +1,7 @@
-import BooksTable from "@/components/admin/BooksTable";
+import AdminTable from "@/components/admin/AdminTable";
+
+import { headerProps } from "@/components/admin/BookTableHeader";
+import BookTableRow from "@/components/admin/BookTableRow";
 import PaginationComponent from "@/components/PaginationComponent";
 import { Button } from "@/components/ui/button";
 import { getLastBooks } from "@/lib/actions/book";
@@ -12,6 +15,15 @@ async function page({ params }: { params: any }) {
   const res = await getLastBooks((page - 1) * PER_PAGE, PER_PAGE);
   const books = res.data?.books;
   const count = res.data?.count || 0;
+
+  const headerTitles: headerProps[] = [
+    { title: "Book Title", span: 4 },
+    { title: "Author", span: 1 },
+    { title: "Genre", span: 1 },
+    { title: "Date Created", span: 1 },
+    { title: "Action", span: 1 },
+  ];
+
   return (
     <div className="flex flex-col p-4 sm:p-8">
       <div className="flex mb-10">
@@ -28,7 +40,13 @@ async function page({ params }: { params: any }) {
           </Button>
         </div>
       </div>
-      {books && <BooksTable books={books} />}
+      {books && (
+        <AdminTable
+          data={books}
+          rander={(book) => <BookTableRow book={book} key={book.id} />}
+          headerTitles={headerTitles}
+        />
+      )}
       {count > PER_PAGE && (
         <PaginationComponent
           pagesCount={count}

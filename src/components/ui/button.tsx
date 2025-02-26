@@ -10,6 +10,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-dark-500 shadow hover:bg-primary/60",
+        admin_link: "underline-offset-4 hover:underline",
+        admin:
+          "bg-primary-admin text-light-100 font-semibold font-ibm-plex-sans hover:text-primary-admin hover:bg-light-100 disabled:bg-primary-admin/60 disabled:cursor-not-allowed disabled:text-gray-700",
+        admin_white:
+          "text-primary-admin bg-light-400 font-semibold font-ibm-plex-sans hover:bg-primary-admin hover:text-light-400 disabled:text-primary-admin/60 disabled:cursor-not-allowed disabled:bg-gray-700",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:

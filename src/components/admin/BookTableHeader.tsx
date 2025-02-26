@@ -1,8 +1,34 @@
 import React from "react";
 
-const BookTableHeader = () => {
+export interface headerProps {
+  title: string;
+  span: number;
+}
+const BookTableHeader = ({ titles }: { titles: headerProps[] }) => {
+  const cols = titles.reduce((p, c) => p + c.span, 0);
+  //const classn = ` w-full bg-light-400 h-12 items-center grid grid-cols-${cols} grid-rows-1`;
+  //console.log(classn);
   return (
-    <div className="grid grid-cols-8 grid-rows-1 w-full bg-light-400 h-12 items-center">
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+        gridTemplateRows: "repeat(1, minmax(0, 1fr))",
+        alignItems: "center",
+      }}
+      className=" w-full bg-light-400 h-12"
+    >
+      {titles.map((t) => (
+        <p
+          key={t.title}
+          style={{ gridColumn: `span ${t.span} / span ${t.span}` }}
+          className={`pl-2 text-dark-100 font-light text-sm `}
+        >
+          {t.title}
+        </p>
+      ))}
+      {/*
+      
       <p className="pl-2 text-dark-100 font-light text-sm col-span-4">
         Book Title
       </p>
@@ -11,7 +37,7 @@ const BookTableHeader = () => {
       <p className="pl-2 text-dark-100 font-light text-sm col-span-1">
         Date Created
       </p>
-      <p className="pl-2 text-dark-100 font-light text-sm col-span-1">Action</p>
+      <p className="pl-2 text-dark-100 font-light text-sm col-span-1">Action</p> */}
     </div>
   );
 };
