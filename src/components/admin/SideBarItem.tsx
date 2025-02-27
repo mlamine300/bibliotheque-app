@@ -13,9 +13,10 @@ interface Props {
 }
 function SideBarItem({ title, to, icon }: Props) {
   const pathName = usePathname();
+
   const selected =
     (to === "/admin" && to === pathName) ||
-    (to !== "/admin" && pathName.includes(to));
+    (to !== "/admin" && pathName.replace("/new", "") === to);
   const linkclassName = selected
     ? "bg-primary-admin text-white"
     : "text-dark-100";

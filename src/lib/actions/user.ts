@@ -159,6 +159,52 @@ export const updateUserRole: (
   }
 };
 
+export const rejectUserStatus: (
+  id: string
+) => Promise<UserActionResponse> = async (id) => {
+  try {
+    const checkAdmin = await checkSuperiority(id);
+    if (!checkAdmin.success) return checkAdmin;
+
+    await db
+      .update(usersTable)
+      .set({ status: "REJECTED" })
+      .where(eq(usersTable.id, id));
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error: "Error Rejecting user, " + error,
+    };
+  }
+};
+
+export const approveUserStatus: (
+  id: string
+) => Promise<UserActionResponse> = async (id) => {
+  try {
+    const checkAdmin = await checkSuperiority(id);
+    if (!checkAdmin.success) return checkAdmin;
+
+    await db
+      .update(usersTable)
+      .set({ status: "APPROVED" })
+      .where(eq(usersTable.id, id));
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error: "Error Rejecting user, " + error,
+    };
+  }
+};
+
 export const getUsers: (props?: {
   offset: number;
   limit: number;
