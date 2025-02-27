@@ -46,26 +46,27 @@ export const deleteUser: (
   userID: string
 ) => Promise<UserActionResponse> = async (userID) => {
   try {
-    const admin = await getUser();
-    if (!admin) {
-      return {
-        success: false,
-        error: "no Session, Please connect and try again",
-      };
-    }
-
+    // const admin = await getUser();
+    // if (!admin) {
+    //   return {
+    //     success: false,
+    //     error: "no Session, Please connect and try again",
+    //   };
+    // }
+    const checkAdmin = await checkAdminPermission();
+    if (!checkAdmin.success || !checkAdmin.data?.users) return checkAdmin;
+    const admin = checkAdmin.data?.users[0];
     const userRole = await db
       .select({ role: usersTable.role })
       .from(usersTable)
       .where(eq(usersTable.id, userID));
 
     if (
-      !admin.role ||
-      admin.role === "USER" ||
+      // !admin.role ||
+      // admin.role === "USER" ||
       userRole[0].role === "SUPERADMIN" ||
       (admin.role === "ADMIN" && userRole[0].role === "ADMIN")
     ) {
-      console.log(admin.role, "      ", userRole[0].role);
       return {
         success: false,
         error: "You dont have Permission To do this action",
@@ -82,6 +83,78 @@ export const deleteUser: (
     return {
       success: false,
       error: "Error getting users, " + error,
+    };
+  }
+};
+
+const checkAdminPermission: () => Promise<UserActionResponse> = async () => {
+  try {
+    const admin = await getUser();
+    if (!admin) {
+      return {
+        success: false,
+        error: "no Session, Please connect and try again",
+      };
+    }
+    if (!admin.role || admin.role === "USER")
+      return {
+        success: false,
+        error: "You don't have permission",
+      };
+
+    return { success: true, data: { count: 1, users: [admin] } };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error: "Error Checking admin permission, " + error,
+    };
+  }
+};
+const checkSuperiority: (id: string) => Promise<UserActionResponse> = async (
+  id
+) => {
+  const admin = await checkAdminPermission();
+  if (!admin.success) return admin;
+
+  const adminRole = admin.data?.users[0].role as string;
+
+  const bellow = await db
+    .select({ role: usersTable.role })
+    .from(usersTable)
+    .where(eq(usersTable.id, id));
+  if (!bellow || bellow.length < 0)
+    return {
+      success: false,
+      error: `there is no user with that id : ${id}`,
+    };
+  const userRole = bellow[0].role;
+  if (
+    (adminRole === "ADMIN" && userRole === "USER") ||
+    (adminRole === "SUPERADMIN" && userRole !== "SUPERADMIN")
+  ) {
+    return { success: true };
+  }
+  return { success: false, error: "you don't have supremacy" };
+};
+export const updateUserRole: (
+  role: "USER" | "ADMIN" | "SUPERADMIN",
+  id: string
+) => Promise<UserActionResponse> = async (role, id) => {
+  try {
+    const checkAdmin = await checkSuperiority(id);
+    if (!checkAdmin.success) return checkAdmin;
+    await db
+      .update(usersTable)
+      .set({ role: role })
+      .where(eq(usersTable.id, id));
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Error updating  user role, " + error,
     };
   }
 };

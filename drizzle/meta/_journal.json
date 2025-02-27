@@ -64,6 +64,13 @@
       "when": 1740606010949,
       "tag": "0008_shallow_power_man",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1740650984278,
+      "tag": "0009_many_nico_minoru",
+      "breakpoints": true
     }
   ]
 }

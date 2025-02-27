@@ -46,6 +46,7 @@ export const FIELD_NAMES = {
   universityId: "University ID Number",
   password: "Password",
   universityCard: "Upload University ID Card",
+  userAvatar: "Upload your Image",
 };
 
 export const FIELD_TYPES = {
@@ -53,6 +54,7 @@ export const FIELD_TYPES = {
   email: "email",
   universityId: "number",
   password: "password",
+  userAvatar: "string",
 };
 
 export const sampleBooks = [

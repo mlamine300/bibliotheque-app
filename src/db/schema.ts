@@ -28,6 +28,7 @@ export const usersTable = pgTable("users", {
   status: STATUS_ENUM("status").default("PENDING"),
   role: ROLE_ENUM("role").default("USER"),
   lastActivityDate: date("last_activity_date").defaultNow(),
+  userAvatar: text("userAvatar").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 export const bookTable = pgTable("books", {

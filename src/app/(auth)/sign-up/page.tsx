@@ -14,6 +14,7 @@ function page() {
           universityId: 0,
           password: "",
           universityCard: "",
+          userAvatar: "",
         }}
         schema={signUpSchema}
         type="SIGN_UP "

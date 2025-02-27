@@ -25,6 +25,7 @@ export interface signUpParams {
   universityId: number;
   password: string;
   universityCard: string;
+  userAvatar: string;
 }
 export interface userInfo {
   id?: string;

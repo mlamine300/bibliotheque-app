@@ -25,6 +25,7 @@ export const signUp = async ({
   universityId,
   password,
   universityCard,
+  userAvatar,
 }: signUpParams) => {
   const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
   const { success } = await ratelimit.limit(ip);
@@ -47,6 +48,7 @@ export const signUp = async ({
       universityId,
       password: hashedPassword,
       universityCard,
+      userAvatar,
     });
 
     await workflowClient.trigger({

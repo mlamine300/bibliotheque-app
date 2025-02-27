@@ -1,11 +1,11 @@
 "use client";
 import { userInfo } from "@/index";
-import React from "react";
+import React, { useState } from "react";
 import ProfileImage from "../ProfileImage";
 import dayjs from "dayjs";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Button } from "../ui/button";
-import { deleteUser } from "@/lib/actions/user";
+import { deleteUser, updateUserRole } from "@/lib/actions/user";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -18,9 +18,34 @@ function UserTableRow({
   ViewCardAction: (s: string) => void;
   adminId?: string;
 }) {
+  const [showRoleButtons, setShowRoleButtons] = useState(false);
+  const [role, setRole] = useState(user.role);
   const router = useRouter();
   const { toast } = useToast();
   const jointAt = dayjs(user.createdAt).format("MMM DD YYYY");
+  const handleUpdateUserRole = async (
+    role: "USER" | "ADMIN" | "SUPERADMIN",
+    id: string
+  ) => {
+    const resp = await updateUserRole(role, id);
+
+    if (!resp.success) {
+      toast({
+        title: "Error",
+        description: resp.error as string,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: "Success", description: "User updated successuflly!" });
+      setRole(role);
+    }
+    try {
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setShowRoleButtons(false);
+    }
+  };
   const handleDelete = async () => {
     if (!user.id) {
       toast({
@@ -41,7 +66,7 @@ function UserTableRow({
   };
   return (
     <div
-      className="grid grid-rows-1 items-center border-b-[0.5px] font-ibm-plex-sans border-light-400 mb-1"
+      className="grid grid-rows-1 items-center border-b-[0.5px] h-16 font-ibm-plex-sans border-light-400 mb-1"
       style={{ gridTemplateColumns: "repeat(15, minmax(0, 1fr))" }}
     >
       <div className="col-span-5 flex  items-center ">
@@ -65,15 +90,36 @@ function UserTableRow({
         {jointAt}
       </h3>
       <div className="col-span-1 ">
-        <h3
-          className={`px-2 py-1 w-fit h-fit rounded-full text-sm font-medium ${
-            user.role === "ADMIN" || user.role === "SUPERADMIN"
+        <button
+          onClick={() => setShowRoleButtons((b) => !b)}
+          className={`relative px-2 py-1 w-fit h-fit rounded-full text-sm font-medium ${
+            role === "ADMIN" || role === "SUPERADMIN"
               ? "text-green-800 bg-green-100/50"
               : "text-pink-600 bg-pink-400/30"
           } text-center`}
         >
-          {user.role}
-        </h3>
+          {role}
+        </button>
+        {showRoleButtons && (
+          <div className="absolute z-20 bg-white flex flex-col">
+            <button
+              onClick={() => {
+                handleUpdateUserRole("USER", user.id as string);
+              }}
+              className={` border-b-[1px] border-light-400 px-6 py-2 w-fit h-fit l text-sm font-medium text-green-800 text-center`}
+            >
+              USER
+            </button>
+            <button
+              onClick={() => {
+                handleUpdateUserRole("ADMIN", user.id as string);
+              }}
+              className={` px-6 py-2 w-fit h-fit l text-sm font-medium text-pink-600 text-center`}
+            >
+              ADMIN
+            </button>
+          </div>
+        )}
       </div>
       <h3 className="col-span-2 text-sm font-medium  text-dark-200 text-center">
         10

@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import AdminTable from "./admin/AdminTable";
-import { userInfo } from "..";
-import UserTableRow from "./admin/UserTableRow";
-import { headerProps } from "./admin/BookTableHeader";
-import PaginationComponent from "./PaginationComponent";
-import Modal from "./Modal";
-import UniversityCard from "./UniversityCard";
+import AdminTable from "./AdminTable";
+import { userInfo } from "../..";
+import UserTableRow from "./UserTableRow";
+import { headerProps } from "./BookTableHeader";
+import PaginationComponent from "../PaginationComponent";
+import Modal from "../Modal";
+import UniversityCard from "../UniversityCard";
 
 const UserTable = ({
   users,
@@ -69,11 +69,11 @@ const UserTable = ({
 
       {count > perPage && (
         <PaginationComponent
-          pagesCount={count}
+          pagesCount={Math.ceil(count / perPage)}
           size={3}
           itemStyle=" bg-primary-admin text-light-400 rounded-sm mx-0"
           selectedItemStyle="bg-secondary text-primary-admin border-[0.5px] border-primary-admin cursor-not-allowed"
-          className="self-end my-10 "
+          className="ml-auto mr-8 my-10 "
         />
       )}
 

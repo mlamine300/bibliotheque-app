@@ -10,7 +10,7 @@ function ProfileImage({ img }: { img: string }) {
     >
       <IKImage
         alt="profile img"
-        src={img}
+        path={img}
         width={32}
         height={32}
         className="rounded-full h-8 w-8 "

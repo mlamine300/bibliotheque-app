@@ -102,9 +102,11 @@ const AuthForm = <T extends FieldValues>({
                     {FIELD_NAMES[feild as keyof typeof FIELD_NAMES]}
                   </FormLabel>
                   <FormControl>
-                    {feild === "universityCard" ? (
+                    {feild === "universityCard" || feild === "userAvatar" ? (
                       <FileUpload
-                        folder="/img"
+                        folder={
+                          feild === "universityCard" ? "/img" : "/avatars"
+                        }
                         type="image"
                         variant="dark"
                         placeHolder=""
