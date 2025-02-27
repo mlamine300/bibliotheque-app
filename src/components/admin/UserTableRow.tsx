@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { deleteUser, updateUserRole } from "@/lib/actions/user";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { HiCheck } from "react-icons/hi2";
 
 function UserTableRow({
   user,
@@ -101,22 +102,28 @@ function UserTableRow({
           {role}
         </button>
         {showRoleButtons && (
-          <div className="absolute z-20 bg-white flex flex-col">
+          <div className="absolute z-20 bg-white flex flex-col shadow-2xl shadow-black">
             <button
               onClick={() => {
                 handleUpdateUserRole("USER", user.id as string);
               }}
-              className={` border-b-[1px] border-light-400 px-6 py-2 w-fit h-fit l text-sm font-medium text-green-800 text-center`}
+              className={`flex gap-2 border-b-[1px] border-light-400 px-6 py-2 w-fit h-fit l text-sm font-medium text-green-800 text-center`}
             >
               USER
+              {user.role === "USER" && (
+                <HiCheck className="text-light-500 w-6 h-6" />
+              )}
             </button>
             <button
               onClick={() => {
                 handleUpdateUserRole("ADMIN", user.id as string);
               }}
-              className={` px-6 py-2 w-fit h-fit l text-sm font-medium text-pink-600 text-center`}
+              className={`flex gap-2 px-6 py-2 w-fit h-fit l text-sm font-medium text-pink-600 text-center`}
             >
               ADMIN
+              {user.role === "ADMIN" && (
+                <HiCheck className="text-light-500 w-6 h-6" />
+              )}
             </button>
           </div>
         )}

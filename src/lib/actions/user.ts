@@ -87,30 +87,31 @@ export const deleteUser: (
   }
 };
 
-const checkAdminPermission: () => Promise<UserActionResponse> = async () => {
-  try {
-    const admin = await getUser();
-    if (!admin) {
+export const checkAdminPermission: () => Promise<UserActionResponse> =
+  async () => {
+    try {
+      const admin = await getUser();
+      if (!admin) {
+        return {
+          success: false,
+          error: "no Session, Please connect and try again",
+        };
+      }
+      if (!admin.role || admin.role === "USER")
+        return {
+          success: false,
+          error: "You don't have permission",
+        };
+
+      return { success: true, data: { count: 1, users: [admin] } };
+    } catch (error) {
+      console.log(error);
       return {
         success: false,
-        error: "no Session, Please connect and try again",
+        error: "Error Checking admin permission, " + error,
       };
     }
-    if (!admin.role || admin.role === "USER")
-      return {
-        success: false,
-        error: "You don't have permission",
-      };
-
-    return { success: true, data: { count: 1, users: [admin] } };
-  } catch (error) {
-    console.log(error);
-    return {
-      success: false,
-      error: "Error Checking admin permission, " + error,
-    };
-  }
-};
+  };
 const checkSuperiority: (id: string) => Promise<UserActionResponse> = async (
   id
 ) => {

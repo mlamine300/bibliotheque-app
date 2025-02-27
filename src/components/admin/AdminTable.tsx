@@ -9,7 +9,7 @@ const AdminTable = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rander: (d: any) => ReactNode;
+  rander: (d: any, i?: number) => ReactNode;
   headerTitles: headerProps[];
 }) => {
   return (

@@ -17,7 +17,11 @@ export const STATUS_ENUM = pgEnum("status", [
   "DELETED",
 ]);
 export const ROLE_ENUM = pgEnum("role", ["USER", "ADMIN", "SUPERADMIN"]);
-export const BORROW_STATUS = pgEnum("borrow_status", ["BORROWED", "RETURNED"]);
+export const BORROW_STATUS = pgEnum("borrow_status", [
+  "BORROWED",
+  "RETURNED",
+  "LATE_RETOURN",
+]);
 export const usersTable = pgTable("users", {
   id: uuid("id").notNull().primaryKey().defaultRandom().unique(),
   fullName: varchar("full_name", { length: 255 }).notNull(),
@@ -44,12 +48,14 @@ export const bookTable = pgTable("books", {
   rating: real(),
   description: text("description"),
   summary: text("summary"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 const BORROW_STATUS_ENUM = pgEnum("borrow_status", [
   "BORROWED",
   "RETURNED",
-  "LATE _RETOURN",
+  "LATE_RETOURN",
 ]);
 export const borrowedBooksTable = pgTable("boorowed-books", {
   id: uuid("id").notNull().primaryKey().defaultRandom().unique(),

@@ -12,7 +12,8 @@ export interface book {
   video: string;
   summary: string;
   unavaliable?: boolean;
-  createdAt?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  createdAt?: string | Date;
   borrowedDate?: string;
   returnDate?: string;
   dueDate?: string;
@@ -36,5 +37,15 @@ export interface userInfo {
   userAvatar?: string;
   universityCard: string;
   role?: "USER" | "ADMIN" | "SUPERADMIN";
-  createdAt?: Date;
+  createdAt?: Date | string;
+}
+export interface borrowedBook {
+  book: book;
+  user: userInfo;
+  id: string;
+  borrowedDate: string;
+  returnDate?: string | null;
+  dueDate: string;
+  status: "BORROWED" | "RETURNED" | "LATE_RETOURN";
+  createdAt: string | Date;
 }

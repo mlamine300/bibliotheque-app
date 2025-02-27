@@ -2,14 +2,15 @@
 "use server";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { bookTable, borrowedBooksTable } from "@/db/schema";
-import { book } from "@/index";
+import { bookTable, borrowedBooksTable, usersTable } from "@/db/schema";
+import { book, borrowedBook, userInfo } from "@/index";
 import { and, count, eq, inArray, like, not, or } from "drizzle-orm";
+import { checkAdminPermission } from "./user";
 
 type uploadedBook = Omit<book, "id">;
-interface BookActionResponse {
+interface BookActionResponse<T> {
   success: boolean;
-  data?: { books: book[]; count: number };
+  data?: { books: T; count: number };
   error?: string;
 }
 
@@ -25,7 +26,11 @@ export const addBook = async (book: uploadedBook) => {
     };
   const returnedBook = await db
     .insert(bookTable)
-    .values({ ...book, available_copies: book.total_copies })
+    .values({
+      ...book,
+      createdAt: book.createdAt as Date,
+      available_copies: book.total_copies,
+    })
     .returning();
   return {
     success: true,
@@ -37,7 +42,7 @@ export const addBook = async (book: uploadedBook) => {
 export const getLastBooks: (
   offset?: number,
   limit?: number
-) => Promise<BookActionResponse> = async (offset, limit) => {
+) => Promise<BookActionResponse<book[]>> = async (offset, limit) => {
   try {
     const booksQuery = db
       .select()
@@ -74,9 +79,9 @@ export const getLastBooks: (
   }
 };
 
-export const getBookById: (id: string) => Promise<BookActionResponse> = async (
-  id
-) => {
+export const getBookById: (
+  id: string
+) => Promise<BookActionResponse<book[]>> = async (id) => {
   try {
     const books = (await db
       .select()
@@ -99,7 +104,7 @@ export const getSemilarBooks: (
   genre: string,
   id: string,
   limit?: number
-) => Promise<BookActionResponse> = async (genre, id, limit) => {
+) => Promise<BookActionResponse<book[]>> = async (genre, id, limit) => {
   const genres = genre.split(" / ");
   const query = genres.map((g) => like(bookTable.genre, `%${g}%`));
 
@@ -136,7 +141,7 @@ export const getSearchedBooks: (
   search: string,
   offset?: number,
   limit?: number
-) => Promise<BookActionResponse> = async (search, offset, limit) => {
+) => Promise<BookActionResponse<book[]>> = async (search, offset, limit) => {
   try {
     const query: any = db
       .select()
@@ -180,9 +185,9 @@ export const getSearchedBooks: (
   }
 };
 
-export const borrowBook: (b: string) => Promise<BookActionResponse> = async (
-  bookId
-) => {
+export const borrowBook: (
+  b: string
+) => Promise<BookActionResponse<book[]>> = async (bookId) => {
   try {
     const session = await auth();
     if (!session?.user?.id)
@@ -241,10 +246,73 @@ export const borrowBook: (b: string) => Promise<BookActionResponse> = async (
   }
 };
 
+export const getAllBorrowedBooks: (params?: {
+  offset: number;
+  limit: number;
+}) => Promise<BookActionResponse<borrowedBook[]>> = async (params) => {
+  const offset = params?.offset || 0;
+  const limit = params?.limit || 8;
+  try {
+    const checkIfAdmin = await checkAdminPermission();
+    if (!checkIfAdmin.success)
+      return {
+        success: false,
+        error: checkIfAdmin.error,
+      };
+    const res = await db
+      .select({ bookId: borrowedBooksTable.bookId })
+      .from(borrowedBooksTable)
+      .orderBy(borrowedBooksTable.createdAt);
+    if (!res || res.length < 1)
+      return {
+        success: true,
+        data: { books: [] as borrowedBook[], count: 0 },
+      };
+    const bookIDs = res.map((r) => r.bookId);
+
+    const booksResp = await db
+      .select()
+      .from(bookTable)
+      .where(inArray(bookTable.id, bookIDs))
+      .innerJoin(
+        borrowedBooksTable,
+
+        eq(borrowedBooksTable.bookId, bookTable.id)
+      )
+      .innerJoin(usersTable, eq(borrowedBooksTable.userId, usersTable.id))
+      .offset(offset)
+      .limit(limit);
+    // console.log(booksResp);
+    const books = booksResp.map((br) => {
+      return {
+        book: br.books as book,
+        user: br.users as userInfo,
+        id: br["boorowed-books"].id as string,
+        borrowedDate: br["boorowed-books"].borrowedDate as string,
+        returnDate: br["boorowed-books"].returnDate as string,
+        dueDate: br["boorowed-books"].dueDate as string,
+        status: br["boorowed-books"].status as string,
+        createdAt: br["boorowed-books"].createdAt,
+      };
+    });
+    // console.log(books);
+    return {
+      success: true,
+      data: { books: books as borrowedBook[], count: bookIDs.length },
+    };
+  } catch (error) {
+    console.log("error getting berrowed books : ", error);
+    return {
+      success: false,
+      error: error as string,
+    };
+  }
+};
+
 export const getBorrowedBooks: (params?: {
   offset: number;
   limit: number;
-}) => Promise<BookActionResponse> = async (data) => {
+}) => Promise<BookActionResponse<borrowedBook[]>> = async (data) => {
   const offset = data?.offset || 0;
   const limit = data?.limit || 10;
   try {
@@ -262,7 +330,7 @@ export const getBorrowedBooks: (params?: {
     if (!res || res.length < 1)
       return {
         success: true,
-        data: { books: [] as book[], count: 0 },
+        data: { books: [] as borrowedBook[], count: 0 },
       };
     const bookIDs = res.map((r) => r.bookId);
 
@@ -277,29 +345,58 @@ export const getBorrowedBooks: (params?: {
           eq(borrowedBooksTable.userId, session.user.id)
         )
       )
+      .innerJoin(usersTable, eq(borrowedBooksTable.userId, usersTable.id))
       .offset(offset)
       .limit(limit);
+    //console.log(booksResp);
     const books = booksResp.map((br) => {
-      const childbooks = br.books;
-      const borrowedBooks = br["boorowed-books"];
       return {
-        ...childbooks,
-        borrowedDate: borrowedBooks.borrowedDate,
-        returnDate: borrowedBooks.returnDate,
-        dueDate: borrowedBooks.dueDate,
-        //status: borrowedBooks.status,
+        book: br.books as book,
+        user: br.users as userInfo,
+        id: br["boorowed-books"].id as string,
+        borrowedDate: br["boorowed-books"].id as string,
+        returnDate: br["boorowed-books"].returnDate as string,
+        dueDate: br["boorowed-books"].dueDate as string,
+        status: br["boorowed-books"].status as string,
+        createdAt: br["boorowed-books"].createdAt,
       };
     });
     // console.log(books);
     return {
       success: true,
-      data: { books: books as book[], count: bookIDs.length },
+      data: { books: books as borrowedBook[], count: bookIDs.length },
     };
   } catch (error) {
     console.log("error getting berrowed books : ", error);
     return {
       success: false,
       error: error as string,
+    };
+  }
+};
+
+export const updateBorrowBookStatus: (
+  id: string,
+  status: "BORROWED" | "RETURNED" | "LATE_RETOURN"
+) => Promise<BookActionResponse<borrowedBook>> = async (id, s) => {
+  try {
+    const isAdmi = await checkAdminPermission();
+    if (!isAdmi.success)
+      return {
+        success: false,
+        error: isAdmi.error,
+      };
+    await db
+      .update(borrowedBooksTable)
+      .set({ status: s })
+      .where(eq(borrowedBooksTable.id, id));
+
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error: "Error Updating Book status " + error,
     };
   }
 };
