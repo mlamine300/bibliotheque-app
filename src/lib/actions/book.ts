@@ -185,6 +185,40 @@ export const getSearchedBooks: (
   }
 };
 
+export const deleteBook: (
+  id: string
+) => Promise<BookActionResponse<book>> = async (id) => {
+  try {
+    const checkAdmin = await checkAdminPermission();
+    if (!checkAdmin.success)
+      return {
+        success: false,
+        error: checkAdmin.error,
+      };
+    //check if the book is borrowed
+    const resp = await db
+      .select()
+      .from(borrowedBooksTable)
+      .where(eq(borrowedBooksTable.bookId, id));
+    if (resp?.length > 0)
+      return {
+        success: false,
+        error: "This book is borrowed you can't delete it",
+      };
+
+    await db.delete(bookTable).where(eq(bookTable.id, id));
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log("Error deleting book", error);
+    return {
+      success: false,
+      error: "Error deleting book, " + error,
+    };
+  }
+};
+
 export const borrowBook: (
   b: string
 ) => Promise<BookActionResponse<book[]>> = async (bookId) => {

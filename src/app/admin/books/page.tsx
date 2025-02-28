@@ -49,7 +49,7 @@ async function page({ params }: { params: any }) {
       )}
       {count > PER_PAGE && (
         <PaginationComponent
-          pagesCount={count}
+          pagesCount={Math.ceil(count / PER_PAGE)}
           size={3}
           itemStyle=" bg-primary-admin text-light-400 rounded-sm mx-0"
           selectedItemStyle="bg-secondary text-primary-admin border-[0.5px] border-primary-admin cursor-not-allowed"
