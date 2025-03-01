@@ -1,11 +1,13 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import SideBarItem from "./SideBarItem";
 import SideBarProfileItem from "./SideBarProfileItem";
 import { Session } from "next-auth";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 function SideBar({ session }: { session: Session }) {
+  const path = usePathname();
   if (!session?.user?.email || !session?.user?.name) {
     console.log("--------------------------------------------------------");
     console.log(session);
@@ -31,28 +33,28 @@ function SideBar({ session }: { session: Session }) {
           icon="/icons/admin/home.svg"
           title="Home"
           to="/admin"
-          selected={false}
+          selected={path === "/admin"}
         />
         <SideBarItem
           key="all-users"
           icon="/icons/admin/users.svg"
           title="All Users"
           to="/admin/users"
-          selected={true}
+          selected={path.includes("/admin/users") && !path.includes("requests")}
         />
         <SideBarItem
           key="all-books"
           icon="/icons/admin/book.svg"
           title="All Books"
           to="/admin/books"
-          selected={false}
+          selected={path.includes("/admin/books") && !path.includes("borrow")}
         />
         <SideBarItem
           key="borrow-books"
           icon="/icons/admin/bookmark.svg"
           title="Borrow Requests"
           to="/admin/books/borrow"
-          selected={false}
+          selected={path.includes("/admin/books/borrow")}
         />
 
         <SideBarItem
@@ -60,7 +62,7 @@ function SideBar({ session }: { session: Session }) {
           icon="/icons/admin/user.svg"
           title="Account Requests"
           to="/admin/users/requests"
-          selected={false}
+          selected={path.includes("/admin/users/requests")}
         />
       </div>
       <SideBarProfileItem

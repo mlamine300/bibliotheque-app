@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+
 const ibmPlexSans = localFont({
   src: [
     {
@@ -13,7 +14,7 @@ const ibmPlexSans = localFont({
       style: "normal",
     },
     {
-      path: "./fonts/IBMPlexSans-Medium.ttf",
+      path: "/fonts/IBMPlexSans-Medium.ttf",
       weight: "500",
       style: "normal",
     },

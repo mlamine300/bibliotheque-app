@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import React from "react";
 
 interface Props {
@@ -11,12 +11,12 @@ interface Props {
   icon: string;
   selected: boolean;
 }
-function SideBarItem({ title, to, icon }: Props) {
-  const pathName = usePathname();
+function SideBarItem({ title, to, icon, selected }: Props) {
+  // const pathName = usePathname();
 
-  const selected =
-    (to === "/admin" && to === pathName) ||
-    (to !== "/admin" && pathName.replace("/new", "") === to);
+  // const selected =
+  //   (to === "/admin" && to === pathName) ||
+  //   (to !== "/admin" && pathName.replace("/new", "") === to);
   const linkclassName = selected
     ? "bg-primary-admin text-white"
     : "text-dark-100";
