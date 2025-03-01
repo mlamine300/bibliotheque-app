@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 async function page({ params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params;
   const { data } = await getBookById(id);
 
   if (!data) redirect("/404");

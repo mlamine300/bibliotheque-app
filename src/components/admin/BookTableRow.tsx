@@ -28,14 +28,17 @@ const BookTableRow = ({ book }: { book: book }) => {
   };
   return (
     <div className="relative grid grid-cols-8 grid-rows-1 w-full  h-20 items-center font-ibm-plex-sans border-b-[0.5px] border-light-400 mb-1">
-      <div className="pl-2 flex gap-2 col-span-4 items-center">
+      <Link
+        href={`/admin/books/${book.id}`}
+        className="pl-2 flex gap-2 col-span-4 items-center"
+      >
         <BookCover
           coverColor={book.color}
           coverUrl={book.cover}
           className="w-7 h-10"
         />
         <p className=" text-dark-100 font-semibold text-sm ">{book.title}</p>
-      </div>
+      </Link>
       <p className="pl-2 text-dark-100 font-medium text-sm col-span-1">
         {book.author}
       </p>

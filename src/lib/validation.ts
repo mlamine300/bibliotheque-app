@@ -14,7 +14,7 @@ export const signInSchema = z.object({
 });
 
 export const bookSchema = z.object({
-  // id: z.string().nonempty(),
+  id: z.string().optional(),
   title: z.string().min(3).max(100).nonempty(),
   author: z.string().min(3).max(100).nonempty(),
   genre: z.string().min(3).max(300).nonempty(),

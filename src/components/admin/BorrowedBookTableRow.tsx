@@ -11,6 +11,7 @@ import ProfileImage from "../ProfileImage";
 import { HiCheck } from "react-icons/hi2";
 import { updateBorrowBookStatus } from "@/lib/actions/book";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 const BorrowedBookTableRow = ({
   borrowedBook,
@@ -50,7 +51,10 @@ const BorrowedBookTableRow = ({
       style={{ gridTemplateColumns: "repeat(18, minmax(0, 1fr))" }}
       className=" grid grid-rows-1 w-full  h-20 items-center gap-4 font-ibm-plex-sans border-b-[0.5px] border-light-400 mb-1"
     >
-      <div className="pl-2 flex gap-2 col-span-4 items-center">
+      <Link
+        href={`/admin/books/${book.id}`}
+        className="pl-2 flex gap-2 col-span-4 items-center"
+      >
         <BookCover
           coverColor={book.color}
           coverUrl={book.cover}
@@ -59,7 +63,7 @@ const BorrowedBookTableRow = ({
         <p className=" text-dark-100 font-semibold text-sm truncate">
           {book.title}
         </p>
-      </div>
+      </Link>
 
       <div className=" col-span-4 flex  items-center ">
         <ProfileImage img={user.userAvatar as string} />

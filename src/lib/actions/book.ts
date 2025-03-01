@@ -14,29 +14,92 @@ interface BookActionResponse<T> {
   error?: string;
 }
 
-export const addBook = async (book: uploadedBook) => {
-  const b = await db
-    .select()
-    .from(bookTable)
-    .where(eq(bookTable.title, book.title));
-  if (b && b.length > 0)
+export const updateBook: (
+  book: book
+) => Promise<BookActionResponse<book[]>> = async (book) => {
+  try {
+    const isItAdmin = await checkAdminPermission();
+    if (!isItAdmin.success)
+      return {
+        success: false,
+        error: isItAdmin.error,
+      };
+    const b = await db
+      .select()
+      .from(bookTable)
+      .where(eq(bookTable.title, book.title));
+    if (!b || b.length < 1)
+      return {
+        success: false,
+        error: "there is no book with such id to update",
+      };
+    const createdAt = book.createdAt ? new Date() : new Date();
+    const returnedBook = (await db
+      .update(bookTable)
+      .set({
+        ...book,
+        createdAt: createdAt,
+        summary: book.summary.replaceAll("\n", "|n|"),
+        description: book.description.replaceAll("\n", "|n|"),
+      })
+      .where(eq(bookTable.id, book.id))
+
+      .returning()) as book[];
+    return {
+      success: true,
+      error: `book "${book.title}" added successufely!`,
+      data: { count: 1, books: returnedBook },
+    };
+  } catch (error) {
+    console.log("Error updating book ", error);
     return {
       success: false,
-      message: "Book already exist please check the title again",
+      error: "Error updating book " + error,
     };
-  const returnedBook = await db
-    .insert(bookTable)
-    .values({
-      ...book,
-      createdAt: book.createdAt as Date,
-      available_copies: book.total_copies,
-    })
-    .returning();
-  return {
-    success: true,
-    message: `book "${book.title}" added successufely!`,
-    data: returnedBook[0],
-  };
+  }
+};
+
+export const addBook: (
+  book: uploadedBook
+) => Promise<BookActionResponse<book[]>> = async (book) => {
+  try {
+    const isItAdmin = await checkAdminPermission();
+    if (!isItAdmin.success)
+      return {
+        success: false,
+        error: isItAdmin.error,
+      };
+    const b = await db
+      .select()
+      .from(bookTable)
+      .where(eq(bookTable.title, book.title));
+    if (b && b.length > 0)
+      return {
+        success: false,
+        error: "Book already exist please check the title again",
+      };
+    const returnedBook = (await db
+      .insert(bookTable)
+      .values({
+        ...book,
+        createdAt: book.createdAt as Date,
+        available_copies: book.total_copies,
+        summary: book.summary.replaceAll("\n", "|n|"),
+        description: book.description.replaceAll("\n", "|n|"),
+      })
+      .returning()) as book[];
+    return {
+      success: true,
+      error: `book "${book.title}" added successufely!`,
+      data: { count: 1, books: returnedBook },
+    };
+  } catch (error) {
+    console.log("Error adding book ", error);
+    return {
+      success: false,
+      error: "Error adding book " + error,
+    };
+  }
 };
 
 export const getLastBooks: (

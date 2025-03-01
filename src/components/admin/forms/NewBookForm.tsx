@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { addBook } from "@/lib/actions/book";
+import { addBook, updateBook } from "@/lib/actions/book";
 import { bookSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -39,6 +39,7 @@ const defaultValues: z.infer<typeof bookSchema> = {
   summary: "",
 };
 function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
+  const isForUpdating = Boolean(values);
   const { toast } = useToast();
   const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
@@ -49,14 +50,16 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
   });
   const submit = async (values: z.infer<typeof bookSchema>) => {
     setPending(true);
-    console.log(values);
-    const { success, message, data } = await addBook(values);
+
+    const { success, error, data } = isForUpdating
+      ? await updateBook({ ...values, id: values.id || "" })
+      : await addBook(values);
     if (!success) {
-      toast({ title: "Error", content: message, variant: "destructive" });
+      toast({ title: "Error", description: error, variant: "destructive" });
     } else {
       console.log(data);
-      toast({ title: "success", content: message });
-      router.push(`/books/${data?.id}`);
+      toast({ title: "success", description: error });
+      router.push(`/admin/books/${data?.books[0].id}`);
     }
     setPending(false);
   };
@@ -256,7 +259,11 @@ function NewBookForm({ values }: { values?: z.infer<typeof bookSchema> }) {
           )}
         />
         <Button size="lg" variant="admin" disabled={pending}>
-          {pending ? "Uploading" : values ? "Update Book" : "Add new Book"}
+          {pending
+            ? "Uploading"
+            : isForUpdating
+            ? "Update Book"
+            : "Add new Book"}
         </Button>
       </form>
     </Form>
