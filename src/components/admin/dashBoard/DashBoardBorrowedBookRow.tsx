@@ -1,19 +1,14 @@
 "use client";
-import { borrowedBook } from "@/index";
 import React, { useState } from "react";
-
-import BookCover from "../BookCover";
-import dayjs from "dayjs";
-
-import { IoReceiptOutline } from "react-icons/io5";
-
-import ProfileImage from "../ProfileImage";
-import { HiCheck } from "react-icons/hi2";
+import ProfileImage from "../../ProfileImage";
+import BookCover from "../../BookCover";
+import Link from "next/link";
+import { borrowedBook } from "@/index";
 import { updateBorrowBookStatus } from "@/lib/actions/book";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "lucide-react";
+import { HiCheck } from "react-icons/hi2";
 
-const BorrowedBookTableRow = ({
+const DashBoardBorrowedBookRow = ({
   borrowedBook,
 }: {
   borrowedBook: borrowedBook;
@@ -45,41 +40,40 @@ const BorrowedBookTableRow = ({
     setStatus(status);
     setShowStatus(false);
   };
-  //console.log(`text-${statusColor["LATE_RETOURN"]}`);
   return (
     <div
-      style={{ gridTemplateColumns: "repeat(18, minmax(0, 1fr))" }}
-      className=" grid grid-rows-1 w-full  h-20 items-center gap-4 font-ibm-plex-sans border-b-[0.5px] border-light-400 mb-1"
+      style={{ gridTemplateColumns: "repeat(8, minmax(0, 1fr))" }}
+      className=" grid grid-rows-1 w-full  h-12 items-center gap-4 font-ibm-plex-sans border-b-[0.5px] border-light-400 mb-1"
     >
       <Link
-        href={`/admin/book/${book.id}`}
-        className="pl-2 flex gap-2 col-span-4 items-center"
+        href={`/admin/books/${book.id}`}
+        className="pl-2 flex gap-2 col-span-3 items-center"
       >
         <BookCover
           coverColor={book.color}
           coverUrl={book.cover}
           className="w-7 h-10"
         />
-        <p className=" text-dark-100 font-semibold text-sm truncate">
+        <p className=" text-dark-100 font-semibold text-xs truncate">
           {book.title}
         </p>
       </Link>
 
-      <div className=" col-span-4 flex  items-center ">
+      <div className=" col-span-3 flex  items-center ">
         <ProfileImage img={user.userAvatar as string} />
         <div className="flex flex-col max-md:hidden pl-1  overflow-hidden">
           <h3 className={`truncate font-semibold`}>{user.fullName}</h3>
-          <p className="truncate text-sm font-normal text-light-500">
+          <p className="truncate text-xs font-normal text-light-500">
             {user.email}{" "}
           </p>
         </div>
       </div>
       <button
         onClick={() => setShowStatus((b) => !b)}
-        className={` col-span-2   font-medium text-sm text-center px-2 rounded-full py-[6px] 
-             
-            bg-${statusColor[status]}/10 
-            text-${statusColor[status]}`}
+        className={` col-span-2   font-medium text-xs text-center px-2 rounded-full py-[6px] 
+         
+        bg-${statusColor[status]}/10 
+        text-${statusColor[status]}`}
       >
         {status.replace("_", " ")}
 
@@ -92,7 +86,7 @@ const BorrowedBookTableRow = ({
               className={`flex gap-4  px-3 py-[6px] border-b-[1px] border-light-500/10`}
             >
               <p
-                className={`text-${statusColor.BORROWED} font-medium text-sm text-center`}
+                className={`text-${statusColor.BORROWED} font-medium text-xs text-center`}
               >
                 BORROWED
               </p>
@@ -107,7 +101,7 @@ const BorrowedBookTableRow = ({
               className={`flex gap-4  px-3 py-[6px] border-b-[1px] border-light-500/10 `}
             >
               <p
-                className={`text-${statusColor.RETURNED} font-medium text-sm text-center`}
+                className={`text-${statusColor.RETURNED} font-medium text-xs text-center`}
               >
                 RETURNED
               </p>
@@ -121,7 +115,7 @@ const BorrowedBookTableRow = ({
               }}
               className={`relative flex gap-4  px-3 py-[6px]`}
             >
-              <p className={`text-sky-400 font-medium text-sm text-center`}>
+              <p className={`text-sky-400 font-medium text-xs text-center`}>
                 LATE RETOURN
               </p>
               {status === "LATE_RETOURN" && (
@@ -131,29 +125,8 @@ const BorrowedBookTableRow = ({
           </div>
         )}
       </button>
-
-      <p className=" pl-2 text-dark-100 font-medium text-sm col-span-2">
-        {borrowedBook.borrowedDate
-          ? dayjs(new Date(borrowedBook.borrowedDate)).format("MMM DD YYYY")
-          : ""}
-      </p>
-      <p className="pl-2 text-dark-100 font-medium text-sm col-span-2">
-        {borrowedBook.createdAt
-          ? dayjs(borrowedBook.createdAt).format("MMM DD YYYY")
-          : ""}
-      </p>
-      <p className="pl-2 text-dark-100 font-medium text-sm col-span-2">
-        {borrowedBook.dueDate
-          ? dayjs(new Date(borrowedBook.dueDate)).format("MMM DD YYYY")
-          : ""}
-      </p>
-      <button className="flex justify-center gap-1 col-span-2 group px-4 py-2 bg-primary-admin/5 mx-auto">
-        <IoReceiptOutline className="text-primary-admin w-4 h-4 group-hover:w-6 group-hover:h-6 group-hover:rotate-12" />
-
-        <p className="text-primary-admin text-sm font-semibold">Generate</p>
-      </button>
     </div>
   );
 };
 
-export default BorrowedBookTableRow;
+export default DashBoardBorrowedBookRow;
