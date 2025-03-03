@@ -1,19 +1,38 @@
 import BookCover from "@/components/BookCover";
 import ProfileImage from "@/components/ProfileImage";
-import { borrowedBook } from "@/index";
+import { book, borrowedBook } from "@/index";
+import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { GoDotFill } from "react-icons/go";
 import { HiCalendar } from "react-icons/hi2";
 
 const DashBoardBorrowedBookRow = ({
   borrowedBook,
+  type,
+  className,
 }: {
-  borrowedBook: borrowedBook;
+  type: string;
+  borrowedBook: borrowedBook | book;
+  className?: string;
 }) => {
-  const { book, user } = borrowedBook;
-  const borrowDate = dayjs(borrowedBook.borrowedDate).format("DD/MM/YY");
+  // const { book, user } = borrowedBook;
+  // const x=typeof borrowedBook;
+  const book =
+    type === "borrowedBook"
+      ? (borrowedBook as borrowedBook).book
+      : (borrowedBook as book);
+  const user = (borrowedBook as borrowedBook).user || null;
+
+  const bookDate = dayjs(
+    user ? borrowedBook.borrowedDate : book.createdAt
+  ).format("DD/MM/YY");
   return (
-    <div className="flex gap-4 items-center p-4 rounded-xl bg-light-300">
+    <div
+      className={cn(
+        className,
+        "flex gap-4 items-center p-4 rounded-xl bg-light-300"
+      )}
+    >
       <BookCover
         coverUrl={book.cover as string}
         coverColor={book.color}
@@ -27,19 +46,21 @@ const DashBoardBorrowedBookRow = ({
           <p>{book.genre} </p>
         </div>
         <div className="flex gap-3 items-center">
-          <div className="flex items-center">
-            <ProfileImage
-              img={user.userAvatar as string}
-              width={18}
-              height={18}
-              className="w-[18px] h-[18px]"
-            />
-            <p className="font-normal text-xs text-gray-500 ">
-              {user.fullName}{" "}
-            </p>
-          </div>
+          {user && (
+            <div className="flex items-center">
+              <ProfileImage
+                img={user.userAvatar as string}
+                width={18}
+                height={18}
+                className="w-[18px] h-[18px]"
+              />
+              <p className="font-normal text-xs text-gray-500 ">
+                {user.fullName}{" "}
+              </p>
+            </div>
+          )}
           <HiCalendar className="w-4 h-4" />
-          <p className="text-xs font-normal">{borrowDate} </p>
+          <p className="text-xs font-normal">{bookDate} </p>
         </div>
       </div>
     </div>

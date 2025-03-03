@@ -1,7 +1,8 @@
 import BorrowBookSection from "@/components/admin/dashBoard/BorrowBookSection";
+import RecentlyAddedBooksSection from "@/components/admin/dashBoard/RecentlyAddedBooksSection";
 import UsersRequestsSection from "@/components/admin/dashBoard/UsersRequestsSection";
 
-import { getAllBorrowedBooks } from "@/lib/actions/book";
+import { getAllBorrowedBooks, getLastBooks } from "@/lib/actions/book";
 import { getUsers } from "@/lib/actions/user";
 
 import React from "react";
@@ -14,6 +15,8 @@ async function page() {
   const barrowedBooks = barrowedBookResponse.data?.books;
   const usersRequestResponse = await getUsers({ offset: 0, limit: 10 });
   const userRequests = usersRequestResponse.data?.users;
+  const receintlyAddedBooksResponse = await getLastBooks(0, 10);
+  const addedBooks = receintlyAddedBooksResponse.data?.books;
   return (
     <section className="flex flex-col gap-8 p-4 font-ibm-plex-sans w-full h-full">
       <div className="flex justify-stretch gap-6">
@@ -57,7 +60,7 @@ async function page() {
           <UsersRequestsSection usersRequest={userRequests} />
         </div>
         <div className="flex w-full flex-col items-center gap-4 p-4 bg-white rounded-xl shadow-lg ">
-          b
+          <RecentlyAddedBooksSection books={addedBooks} />
         </div>
         <div></div>
       </div>

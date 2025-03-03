@@ -26,7 +26,11 @@ const BorrowBookSection = ({
         <div className="overflow-y-auto max-h-[380px] w-full ">
           <div className="flex flex-col gap-4">
             {barrowedBooks.map((book) => (
-              <DashBoardBorrowedBookRow key={book.id} borrowedBook={book} />
+              <DashBoardBorrowedBookRow
+                type="borrowedBook"
+                key={book.id}
+                borrowedBook={book}
+              />
             ))}
           </div>
         </div>

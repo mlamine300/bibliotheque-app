@@ -32,7 +32,7 @@ const UsersRequestsSection = ({
       ) : (
         <>
           <Image
-            src="/icons/admin/no-book.svg"
+            src="/icons/admin/no-user.svg"
             alt="no book"
             width={193}
             height={144}
