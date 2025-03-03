@@ -1,9 +1,9 @@
 import BorrowBookSection from "@/components/admin/dashBoard/BorrowBookSection";
+import UsersRequestsSection from "@/components/admin/dashBoard/UsersRequestsSection";
 
-import { Button } from "@/components/ui/button";
 import { getAllBorrowedBooks } from "@/lib/actions/book";
+import { getUsers } from "@/lib/actions/user";
 
-import Link from "next/link";
 import React from "react";
 import { TbTriangleInvertedFilled } from "react-icons/tb";
 async function page() {
@@ -12,7 +12,8 @@ async function page() {
     limit: 10,
   });
   const barrowedBooks = barrowedBookResponse.data?.books;
-
+  const usersRequestResponse = await getUsers({ offset: 0, limit: 10 });
+  const userRequests = usersRequestResponse.data?.users;
   return (
     <section className="flex flex-col gap-8 p-4 font-ibm-plex-sans w-full h-full">
       <div className="flex justify-stretch gap-6">
@@ -49,20 +50,15 @@ async function page() {
           <h3 className="text-3xl font-semibold text-dark-100">145</h3>
         </div>
       </div>
-      <div className="grow flex w-full h-full ">
-        <div className="w-full flex flex-col gap-8 h-full grow ">
+
+      <div className="grow flex gap-16 w-full h-full ">
+        <div className="w-full flex flex-col gap-8 h-full grow mb-20">
           <BorrowBookSection barrowedBooks={barrowedBooks} />
-          <div className="flex flex-col items-center p-4 bg-white rounded-xl shadow-lg"></div>
-          <div className="flex justify-between">
-            <h3 className="text-xl font-semibold text-dark-100">
-              Account Requests
-            </h3>
-            <Button asChild variant={"admin_white"}>
-              <Link href="/admin/users/requests"> View All </Link>
-            </Button>
-          </div>
+          <UsersRequestsSection usersRequest={userRequests} />
         </div>
-        <div className="w-full h-[900px] grow bg-blue-300">b</div>
+        <div className="flex w-full flex-col items-center gap-4 p-4 bg-white rounded-xl shadow-lg ">
+          b
+        </div>
         <div></div>
       </div>
     </section>

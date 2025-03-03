@@ -3,17 +3,16 @@ import { Button } from "../../ui/button";
 import Link from "next/link";
 
 import Image from "next/image";
-import { borrowedBook } from "@/index";
 
-import DashBoardBorrowedBookRow from "./DashBoardBorrowedBookRow";
-
-const BorrowBookSection = ({
-  barrowedBooks,
+import { userInfo } from "@/index";
+import DashBoardUsersRequestsRow from "./DashBoardUsersRequestsRow";
+const UsersRequestsSection = ({
+  usersRequest,
 }: {
-  barrowedBooks: borrowedBook[] | undefined;
+  usersRequest: userInfo[] | undefined;
 }) => {
   return (
-    <div className="flex flex-col p-4 items-center gap-4 bg-white rounded-xl shadow-lg ">
+    <div className="flex flex-col items-center gap-4 p-4 bg-white rounded-xl shadow-lg ">
       <div className="flex justify-between w-full">
         <h3 className="text-xl  font-semibold text-dark-100">
           Barrow Requests
@@ -22,11 +21,11 @@ const BorrowBookSection = ({
           <Link href="/admin/books/borrow"> View All </Link>
         </Button>
       </div>
-      {barrowedBooks ? (
-        <div className="overflow-y-auto max-h-[380px] w-full ">
-          <div className="flex flex-col gap-4">
-            {barrowedBooks.map((book) => (
-              <DashBoardBorrowedBookRow key={book.id} borrowedBook={book} />
+      {usersRequest ? (
+        <div className="overflow-y-auto max-h-[380px]">
+          <div className="w-full flex justify-evenly gap-y-4 flex-wrap">
+            {usersRequest.map((user) => (
+              <DashBoardUsersRequestsRow user={user} key={user.id} />
             ))}
           </div>
         </div>
@@ -51,4 +50,4 @@ const BorrowBookSection = ({
   );
 };
 
-export default BorrowBookSection;
+export default UsersRequestsSection;
