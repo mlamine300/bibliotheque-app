@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import { userInfo } from "@/index";
-import { count, eq, not } from "drizzle-orm";
+import { and, count, eq, like, not } from "drizzle-orm";
 
 interface UserActionResponse {
   success: boolean;
@@ -209,9 +209,11 @@ export const approveUserStatus: (
 export const getUsers: (props?: {
   offset: number;
   limit: number;
+  search?: string;
 }) => Promise<UserActionResponse> = async (props) => {
   const offset = props?.offset || 0;
   const limit = props?.limit || 10;
+  const search = props?.search;
   try {
     const user = await getUser();
     if (!user)
@@ -227,11 +229,25 @@ export const getUsers: (props?: {
     const countRes = await db
       .select({ count: count() })
       .from(usersTable)
-      .where(not(eq(usersTable.status, "DELETED")));
+      .where(
+        search
+          ? and(
+              not(eq(usersTable.status, "DELETED")),
+              like(usersTable.fullName, `%${search}%`)
+            )
+          : not(eq(usersTable.status, "DELETED"))
+      );
     const resp = await db
       .select()
       .from(usersTable)
-      .where(not(eq(usersTable.status, "DELETED")))
+      .where(
+        search
+          ? and(
+              not(eq(usersTable.status, "DELETED")),
+              like(usersTable.fullName, `%${search}%`)
+            )
+          : not(eq(usersTable.status, "DELETED"))
+      )
       .orderBy(usersTable.createdAt)
       .offset(offset)
       .limit(limit);

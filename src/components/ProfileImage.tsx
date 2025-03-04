@@ -24,7 +24,7 @@ function ProfileImage({
         path={img}
         width={width || 32}
         height={height || 32}
-        className={cn(className, "rounded-full h-8 w-8")}
+        className={cn("rounded-full h-8 w-8", className)}
       />
     </ImageKitProvider>
   );

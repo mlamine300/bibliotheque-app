@@ -104,17 +104,33 @@ export const addBook: (
 
 export const getLastBooks: (
   offset?: number,
-  limit?: number
-) => Promise<BookActionResponse<book[]>> = async (offset, limit) => {
+  limit?: number,
+  search?: string
+) => Promise<BookActionResponse<book[]>> = async (offset, limit, search) => {
   try {
-    const booksQuery = db
-      .select()
-      .from(bookTable)
+    let booksQuery: any = db.select().from(bookTable);
+    if (search && search.length > 3)
+      booksQuery = booksQuery.where(
+        or(
+          like(bookTable.title, `%${search}%`),
+          like(bookTable.author, `%${search}%`)
+        )
+      );
+    booksQuery = booksQuery
       .orderBy(bookTable.createdAt)
       .offset(offset || 0)
       .limit(limit || 15);
 
-    const countBooksQuery = db.select({ count: count() }).from(bookTable);
+    let countBooksQuery: any = db.select({ count: count() }).from(bookTable);
+
+    if (search && search.length > 3)
+      countBooksQuery = countBooksQuery.where(
+        or(
+          like(bookTable.title, `%${search}%`),
+          like(bookTable.author, `%${search}%`)
+        )
+      );
+
     const [books, booksCount]: any = await Promise.all([
       booksQuery,
       countBooksQuery,

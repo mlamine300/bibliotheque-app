@@ -3,6 +3,7 @@ import ProfileImage from "@/components/ProfileImage";
 import { book, borrowedBook } from "@/index";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
+import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
 import { HiCalendar } from "react-icons/hi2";
 
@@ -27,7 +28,8 @@ const DashBoardBorrowedBookRow = ({
     user ? borrowedBook.borrowedDate : book.createdAt
   ).format("DD/MM/YY");
   return (
-    <div
+    <Link
+      href={`/admin/books/${book.id}`}
       className={cn(
         className,
         "flex gap-4 items-center p-4 rounded-xl bg-light-300"
@@ -63,7 +65,7 @@ const DashBoardBorrowedBookRow = ({
           <p className="text-xs font-normal">{bookDate} </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
