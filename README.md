@@ -107,8 +107,8 @@ Make sure you have the following installed on your machine:
 **Cloning the Repository**
 
 ```bash
-git clone https://github.com/adrianhajdin/university-library-jsm.git
-cd university-library-jsm
+git clone https://github.com/mlamine300/bibliotheque-app.git
+cd bibliotheque-app
 ```
 
 **Installation**
